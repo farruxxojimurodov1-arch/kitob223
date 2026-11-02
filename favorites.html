@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="uz" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sevimlilar — Kitobxona</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#faf6ef; --bg2:#f1eadd; --card:#ffffff; --text:#2a211b; --muted:#7a6b5d;
+  --primary:#b4532a; --primary2:#e08a3c; --accent:#1f6f6b; --border:#e6dccb;
+  --shadow:0 10px 30px rgba(80,50,20,.12); --radius:18px;
+}
+[data-theme="dark"]{
+  --bg:#14110f; --bg2:#1c1814; --card:#211c17; --text:#f3ebe0; --muted:#a8998a;
+  --primary:#e08a3c; --primary2:#f2b266; --accent:#4fc1b9; --border:#352d25;
+  --shadow:0 10px 30px rgba(0,0,0,.5);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);transition:background .4s,color .4s;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+h1,h2,h3{font-family:'Playfair Display',serif}
+.container{max-width:1200px;margin:0 auto;padding:0 20px}
+
+/* ============ HEADER ============ */
+header{position:sticky;top:0;z-index:100;background:color-mix(in srgb,var(--bg) 85%,transparent);backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}
+.nav{display:flex;align-items:center;gap:18px;height:70px}
+.logo{display:flex;align-items:center;gap:10px;font-family:'Playfair Display',serif;font-weight:800;font-size:24px}
+.logo span{display:grid;place-items:center;width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,var(--primary),var(--primary2));color:#fff;font-size:20px}
+.links{display:flex;gap:6px;margin-left:12px}
+.links a{padding:8px 14px;border-radius:10px;font-weight:500;font-size:15px;color:var(--muted);transition:.2s}
+.links a:hover,.links a.active{background:var(--bg2);color:var(--text)}
+.search{position:relative;flex:1;max-width:380px;margin-left:auto}
+.search input{width:100%;padding:11px 16px 11px 42px;border-radius:30px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:14px;outline:none;transition:.2s}
+.search input:focus{border-color:var(--primary);box-shadow:0 0 0 4px color-mix(in srgb,var(--primary) 18%,transparent)}
+.search svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:18px;height:18px;color:var(--muted)}
+#sug{position:absolute;top:calc(100% + 8px);left:0;right:0;background:var(--card);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow);overflow:hidden;display:none;z-index:50}
+#sug a{display:flex;gap:12px;align-items:center;padding:10px 14px;font-size:14px}
+#sug a:hover{background:var(--bg2)}
+#sug .mini{width:30px;height:42px;border-radius:3px;flex-shrink:0}
+#sug small{color:var(--muted);display:block}
+.tools{display:flex;align-items:center;gap:8px}
+.ibtn{position:relative;width:42px;height:42px;border-radius:12px;display:grid;place-items:center;background:var(--card);border:1px solid var(--border);transition:.2s}
+.ibtn:hover{transform:translateY(-2px);border-color:var(--primary)}
+.ibtn svg{width:20px;height:20px}
+.badge{position:absolute;top:-6px;right:-6px;min-width:19px;height:19px;padding:0 5px;border-radius:10px;background:var(--primary);color:#fff;font-size:11px;font-weight:700;display:grid;place-items:center}
+.badge:empty,.badge[data-n="0"]{display:none}
+select.lang{height:42px;padding:0 10px;border-radius:12px;border:1px solid var(--border);background:var(--card);color:var(--text);font-weight:600;cursor:pointer;outline:none}
+.burger{display:none}
+
+/* ============ COMMON ============ */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 22px;border-radius:14px;font-weight:600;font-size:14px;transition:.25s}
+.btn.primary{background:linear-gradient(135deg,var(--primary),var(--primary2));color:#fff;box-shadow:0 8px 20px color-mix(in srgb,var(--primary) 30%,transparent)}
+.btn.ghost{border:1px solid var(--border);background:var(--card)}
+.btn.ghost:hover{border-color:#e0394f;color:#e0394f}
+.btn:hover{transform:translateY(-2px)}
+.cov{position:relative;width:100%;height:100%;padding:14px 12px;color:#fff;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden;border-radius:inherit;text-align:left}
+.cov::before{content:"";position:absolute;inset:0;background:linear-gradient(120deg,rgba(255,255,255,.22),transparent 40%,rgba(0,0,0,.25));pointer-events:none}
+.cov::after{content:"";position:absolute;left:8px;top:0;bottom:0;width:2px;background:rgba(0,0,0,.2)}
+.cov .ct{font-family:'Playfair Display',serif;font-weight:700;line-height:1.15;text-shadow:0 2px 6px rgba(0,0,0,.4);font-size:1em;position:relative}
+.cov .ca{font-size:.62em;letter-spacing:1.5px;text-transform:uppercase;opacity:.9;position:relative}
+.cov .cg{font-size:2.2em;opacity:.9;position:relative}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:26px}
+.card{position:relative;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;transition:transform .35s,box-shadow .35s,opacity .3s;transform-style:preserve-3d;display:flex;flex-direction:column;animation:pop .5s both}
+@keyframes pop{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+.card.gone{opacity:0;transform:scale(.85)!important}
+.card:hover{box-shadow:var(--shadow)}
+.card .bookwrap{perspective:900px;height:250px;display:grid;place-items:center;margin-bottom:14px}
+.card .bk3{width:150px;height:222px;transform-style:preserve-3d;transform:rotateY(-18deg);transition:transform .6s cubic-bezier(.2,.8,.2,1);position:relative}
+.card:hover .bk3{transform:rotateY(-2deg) scale(1.06)}
+.bk3 .front{position:absolute;inset:0;border-radius:3px 8px 8px 3px;box-shadow:6px 8px 18px rgba(0,0,0,.35);font-size:15px}
+.bk3 .side{position:absolute;left:0;top:2px;width:14px;height:calc(100% - 4px);background:#efe2c2;transform-origin:left;transform:rotateY(90deg) translateX(-14px)}
+.card h3{font-size:17px;line-height:1.3;margin-bottom:4px;font-family:'Inter',sans-serif;font-weight:600}
+.card .au{color:var(--muted);font-size:13px;margin-bottom:8px}
+.stars{color:#f5a623;font-size:13px;letter-spacing:1px}
+.stars small{color:var(--muted);letter-spacing:0;margin-left:4px}
+.card .row{display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:12px}
+.price{font-weight:700;font-size:17px}
+.add{padding:9px 14px;border-radius:12px;background:var(--primary);color:#fff;font-size:13px;font-weight:600;transition:.2s}
+.add:hover{filter:brightness(1.1);transform:scale(1.05)}
+.fav{position:absolute;top:14px;right:14px;z-index:3;width:36px;height:36px;border-radius:50%;background:var(--bg);border:1px solid var(--border);display:grid;place-items:center;transition:.25s}
+.fav svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2}
+.fav:hover{transform:scale(1.15)}
+.fav.on{color:#e0394f;background:#ffe9ec;border-color:#f6b6c0}
+.fav.on svg{fill:currentColor}
+.sale{position:absolute;top:14px;left:14px;z-index:3;background:var(--accent);color:#fff;font-size:12px;font-weight:700;padding:4px 10px;border-radius:20px}
+footer{background:var(--bg2);border-top:1px solid var(--border);padding:34px 0;margin-top:70px;text-align:center;color:var(--muted);font-size:13px}
+#toast{position:fixed;left:50%;bottom:30px;transform:translate(-50%,100px);background:var(--text);color:var(--bg);padding:13px 22px;border-radius:30px;font-weight:600;font-size:14px;z-index:2000;transition:.4s;opacity:0;max-width:90vw;text-align:center}
+#toast.show{transform:translate(-50%,0);opacity:1}
+
+/* ============ FAVORITES ============ */
+.page-head{padding:40px 0 10px}
+.crumbs{color:var(--muted);font-size:13px;margin-bottom:10px}
+.crumbs a:hover{color:var(--primary)}
+.page-head h1{font-size:clamp(30px,4vw,46px);display:flex;align-items:center;gap:14px}
+.page-head h1 .heart{color:#e0394f;animation:beat 1.6s ease-in-out infinite;display:inline-block}
+@keyframes beat{0%,100%{transform:scale(1)}15%{transform:scale(1.25)}30%{transform:scale(1)}45%{transform:scale(1.15)}}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin:26px 0 24px;padding:16px 20px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius)}
+.bar .info{color:var(--muted);font-size:14px;line-height:1.6}
+.bar .info b{color:var(--text)}
+.bar .acts{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.sortsel{padding:11px 14px;border-radius:12px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:14px;font-family:inherit;outline:none}
+.sortsel:focus{border-color:var(--primary)}
+.empty{text-align:center;padding:70px 20px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius)}
+.empty .ico{font-size:70px;margin-bottom:14px;animation:beat 2s ease-in-out infinite;display:inline-block}
+.empty h2{margin-bottom:10px;font-size:28px}
+.empty p{color:var(--muted);margin-bottom:24px}
+.rec{margin-top:60px}
+.rec h2{font-size:clamp(24px,3vw,32px);margin-bottom:24px}
+
+@media(max-width:900px){
+  .links{display:none;position:absolute;top:70px;left:0;right:0;background:var(--bg);flex-direction:column;padding:12px 20px;border-bottom:1px solid var(--border)}
+  .links.show{display:flex}.burger{display:grid}
+  .search{max-width:none}
+}
+@media(max-width:600px){
+  .nav{gap:8px}.logo b{display:none}
+  .grid{grid-template-columns:repeat(2,1fr);gap:14px}
+  .card{padding:12px}.card .bookwrap{height:200px}.bk3{transform:scale(.85) rotateY(-18deg)!important}
+  .bar .acts{width:100%}.bar .acts>*{flex:1}
+}
+</style>
+</head>
+<body>
+
+<!-- ============ HEADER ============ -->
+<header>
+  <div class="container nav">
+    <a href="index.html" class="logo"><span>📖</span><b>Kitobxona</b></a>
+    <nav class="links" id="links">
+      <a href="index.html" data-i18n="navHome">Bosh sahifa</a>
+      <a href="catalog.html" data-i18n="navCatalog">Katalog</a>
+      <a href="favorites.html" class="active" data-i18n="navFav">Sevimlilar</a>
+      <a href="cart.html" data-i18n="navCart">Savat</a>
+    </nav>
+    <div class="search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input id="q" type="search" autocomplete="off" data-i18n-ph="search" placeholder="Kitob yoki muallif qidirish...">
+      <div id="sug"></div>
+    </div>
+    <div class="tools">
+      <select class="lang" id="lang"><option value="uz">UZ</option><option value="ru">RU</option><option value="en">EN</option></select>
+      <button class="ibtn" id="theme" aria-label="theme"><span id="themeIco">🌙</span></button>
+      <a class="ibtn" href="favorites.html" aria-label="favorites"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-4.6-9.3-9.1C1 8.5 3 5 6.4 5c2 0 3.6 1.1 4.6 2.6h2C14 6.1 15.6 5 17.6 5 21 5 23 8.5 21.3 11.9 19 16.4 12 21 12 21z"/></svg><span class="badge" id="favCount" data-n="0"></span></a>
+      <a class="ibtn" href="cart.html" aria-label="cart"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M2 3h3l2.6 12.4a2 2 0 0 0 2 1.6h7.8a2 2 0 0 0 2-1.5L21 8H6"/></svg><span class="badge" id="cartCount" data-n="0"></span></a>
+      <button class="ibtn burger" id="burger" aria-label="menu">☰</button>
+    </div>
+  </div>
+</header>
+
+<main class="container">
+  <div class="page-head">
+    <div class="crumbs"><a href="index.html" data-i18n="navHome">Bosh sahifa</a> / <span data-i18n="navFav">Sevimlilar</span></div>
+    <h1><span class="heart">♥</span><span data-i18n="favTitle">Sevimli kitoblar</span></h1>
+  </div>
+  <div id="page"></div>
+</main>
+
+<footer>© 2026 Kitobxona. <span data-i18n="rights">Barcha huquqlar himoyalangan.</span></footer>
+<div id="toast"></div>
+
+<script>
+/* =====================================================
+   SHARED CORE  (har bir HTML faylda bir xil)
+   ===================================================== */
+const BOOKS = [
+  {id:1, t:{uz:"O'tkan kunlar",ru:"Минувшие дни",en:"Bygone Days"}, a:"Abdulla Qodiriy", g:"fiction", p:68000, old:80000, r:4.9, n:1280, c:["#7a2e12","#d9822b"], ic:"❦", y:1925, pg:420},
+  {id:2, t:{uz:"Mehrobdan chayon",ru:"Скорпион из алтаря",en:"Scorpion from the Altar"}, a:"Abdulla Qodiriy", g:"fiction", p:59000, r:4.8, n:910, c:["#1f4e5f","#4fa3a5"], ic:"✦", y:1929, pg:360},
+  {id:3, t:{uz:"Atomic Habits",ru:"Атомные привычки",en:"Atomic Habits"}, a:"James Clear", g:"selfdev", p:95000, old:115000, r:4.9, n:2310, c:["#c0392b","#f39c12"], ic:"⚛", y:2018, pg:320},
+  {id:4, t:{uz:"Boy ota, kambag'al ota",ru:"Богатый папа, бедный папа",en:"Rich Dad Poor Dad"}, a:"Robert Kiyosaki", g:"business", p:79000, r:4.7, n:1840, c:["#14532d","#65a30d"], ic:"$", y:1997, pg:336},
+  {id:5, t:{uz:"Kichkina shahzoda",ru:"Маленький принц",en:"The Little Prince"}, a:"Antoine de Saint-Exupéry", g:"kids", p:52000, r:4.9, n:3020, c:["#1e3a8a","#60a5fa"], ic:"☆", y:1943, pg:96},
+  {id:6, t:{uz:"Ikki eshik orasi",ru:"Между двух дверей",en:"Between Two Doors"}, a:"O'tkir Hoshimov", g:"fiction", p:64000, r:4.8, n:760, c:["#4a1d6b","#a855f7"], ic:"❖", y:1986, pg:380},
+  {id:7, t:{uz:"Zero to One",ru:"От нуля к единице",en:"Zero to One"}, a:"Peter Thiel", g:"business", p:88000, old:99000, r:4.6, n:1120, c:["#111827","#6b7280"], ic:"0→1", y:2014, pg:224},
+  {id:8, t:{uz:"1984",ru:"1984",en:"1984"}, a:"George Orwell", g:"fiction", p:72000, r:4.8, n:2640, c:["#7f1d1d","#111"], ic:"👁", y:1949, pg:328},
+  {id:9, t:{uz:"Sapiens",ru:"Sapiens",en:"Sapiens"}, a:"Yuval Noah Harari", g:"science", p:105000, r:4.8, n:1980, c:["#b45309","#fbbf24"], ic:"☼", y:2011, pg:512},
+  {id:10, t:{uz:"Python asoslari",ru:"Основы Python",en:"Python Fundamentals"}, a:"Eric Matthes", g:"tech", p:125000, old:150000, r:4.7, n:640, c:["#0f3d5e","#3b82f6"], ic:"</>", y:2023, pg:544},
+  {id:11, t:{uz:"Alisa mo'jizalar mamlakatida",ru:"Алиса в стране чудес",en:"Alice in Wonderland"}, a:"Lewis Carroll", g:"kids", p:48000, r:4.7, n:870, c:["#be185d","#f9a8d4"], ic:"♠", y:1865, pg:200},
+  {id:12, t:{uz:"Deep Work",ru:"Глубокая работа",en:"Deep Work"}, a:"Cal Newport", g:"selfdev", p:82000, r:4.6, n:930, c:["#134e4a","#2dd4bf"], ic:"◎", y:2016, pg:304}
+];
+const I18N = {
+ uz:{navHome:"Bosh sahifa",navCatalog:"Katalog",navFav:"Sevimlilar",navCart:"Savat",search:"Kitob yoki muallif qidirish...",
+  rights:"Barcha huquqlar himoyalangan.",add:"Savatga",added:"Savatga qo'shildi ✓",favAdd:"Sevimlilarga qo'shildi ♥",favDel:"Sevimlilardan olib tashlandi",som:"so'm",nores:"Hech narsa topilmadi",
+  favTitle:"Sevimli kitoblar",emptyT:"Sevimlilar bo'sh",emptyP:"Yoqqan kitoblaringizdagi ♥ tugmasini bosing — ular shu yerda saqlanadi.",toCatalog:"Katalogga o'tish",
+  inList:"Ro'yxatda:",books:"ta kitob",sumLbl:"Umumiy narx:",addAll:"Hammasini savatga",clearAll:"Tozalash",allAdded:"kitob savatga qo'shildi ✓",
+  sAdded:"Qo'shilgan tartibda",sAsc:"Arzonroq",sDesc:"Qimmatroq",sRate:"Reyting bo'yicha",sAz:"Nomi A–Z",recT:"Sizga yoqishi mumkin",undo:"Qaytarish"},
+ ru:{navHome:"Главная",navCatalog:"Каталог",navFav:"Избранное",navCart:"Корзина",search:"Поиск книги или автора...",
+  rights:"Все права защищены.",add:"В корзину",added:"Добавлено в корзину ✓",favAdd:"Добавлено в избранное ♥",favDel:"Удалено из избранного",som:"сум",nores:"Ничего не найдено",
+  favTitle:"Избранные книги",emptyT:"В избранном пусто",emptyP:"Нажмите ♥ на понравившихся книгах — они сохранятся здесь.",toCatalog:"Перейти в каталог",
+  inList:"В списке:",books:"книг",sumLbl:"Общая стоимость:",addAll:"Всё в корзину",clearAll:"Очистить",allAdded:"книг добавлено в корзину ✓",
+  sAdded:"По порядку добавления",sAsc:"Дешевле",sDesc:"Дороже",sRate:"По рейтингу",sAz:"По названию А–Я",recT:"Вам может понравиться",undo:"Вернуть"},
+ en:{navHome:"Home",navCatalog:"Catalog",navFav:"Favorites",navCart:"Cart",search:"Search a book or author...",
+  rights:"All rights reserved.",add:"Add to cart",added:"Added to cart ✓",favAdd:"Added to favorites ♥",favDel:"Removed from favorites",som:"UZS",nores:"Nothing found",
+  favTitle:"Favorite books",emptyT:"No favorites yet",emptyP:"Tap ♥ on books you like — they'll be saved here.",toCatalog:"Go to catalog",
+  inList:"In list:",books:"books",sumLbl:"Total price:",addAll:"Add all to cart",clearAll:"Clear",allAdded:"books added to cart ✓",
+  sAdded:"Recently added",sAsc:"Price: low to high",sDesc:"Price: high to low",sRate:"Top rated",sAz:"Title A–Z",recT:"You may also like",undo:"Undo"}
+};
+
+const LS = {
+  get(k,d){try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}},
+  set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+};
+let lang  = LS.get('kx_lang','uz');
+let theme = LS.get('kx_theme', matchMedia('(prefers-color-scheme: dark)').matches ? 'dark':'light');
+let cart  = LS.get('kx_cart',{});
+let favs  = LS.get('kx_favs',[]);
+
+const $  = (s,r=document)=>r.querySelector(s);
+const $$ = (s,r=document)=>[...r.querySelectorAll(s)];
+const tr = k => (I18N[lang]&&I18N[lang][k]) ?? I18N.uz[k] ?? k;
+const money = n => n.toLocaleString('ru-RU').replace(/\u00a0/g,' ') + ' ' + tr('som');
+const bt = b => b.t[lang];
+
+function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove('show'),2000)}
+function applyLang(){
+  document.documentElement.lang = lang;
+  $$('[data-i18n]').forEach(el=>el.textContent = tr(el.dataset.i18n));
+  $$('[data-i18n-ph]').forEach(el=>el.placeholder = tr(el.dataset.i18nPh));
+  $('#lang').value = lang;
+}
+function applyTheme(){
+  document.documentElement.dataset.theme = theme;
+  $('#themeIco').textContent = theme==='dark' ? '☀️' : '🌙';
+}
+function updateCounts(){
+  const c = Object.values(cart).reduce((s,x)=>s+x,0);
+  $('#cartCount').textContent = c||''; $('#cartCount').dataset.n = c;
+  $('#favCount').textContent = favs.length||''; $('#favCount').dataset.n = favs.length;
+}
+function addToCart(id,n=1,silent){cart[id]=(cart[id]||0)+n;LS.set('kx_cart',cart);updateCounts();if(!silent)toast(tr('added'))}
+function toggleFav(id){
+  const i=favs.indexOf(id);
+  if(i>-1){favs.splice(i,1);toast(tr('favDel'))}else{favs.push(id);toast(tr('favAdd'))}
+  LS.set('kx_favs',favs);updateCounts();
+  $$(`.fav[data-id="${id}"]`).forEach(b=>b.classList.toggle('on',favs.includes(id)));
+  if(typeof onFavChange==='function')onFavChange(id);
+}
+addEventListener('storage',e=>{
+  if(e.key==='kx_cart')cart=LS.get('kx_cart',{});
+  if(e.key==='kx_favs'){favs=LS.get('kx_favs',[]);renderAll()}
+  updateCounts();
+});
+function coverHTML(b,size){
+  return `<div class="cov" style="background:linear-gradient(145deg,${b.c[0]},${b.c[1]});${size?`font-size:${size}px`:''}">
+    <div class="cg">${b.ic}</div><div><div class="ct">${bt(b)}</div><div class="ca" style="margin-top:6px">${b.a}</div></div></div>`;
+}
+function stars(r){const f=Math.round(r);return '★'.repeat(f)+'☆'.repeat(5-f)}
+function cardHTML(b,i=0){
+  const sale = b.old ? `<span class="sale">-${Math.round((1-b.p/b.old)*100)}%</span>` : '';
+  return `<article class="card" data-id="${b.id}" style="animation-delay:${Math.min(i,12)*40}ms">
+    ${sale}
+    <button class="fav ${favs.includes(b.id)?'on':''}" data-id="${b.id}" aria-label="favorite"><svg viewBox="0 0 24 24"><path d="M12 21s-7-4.6-9.3-9.1C1 8.5 3 5 6.4 5c2 0 3.6 1.1 4.6 2.6h2C14 6.1 15.6 5 17.6 5 21 5 23 8.5 21.3 11.9 19 16.4 12 21 12 21z"/></svg></button>
+    <a href="product.html?id=${b.id}" class="bookwrap"><div class="bk3"><div class="front">${coverHTML(b,15)}</div><div class="side"></div></div></a>
+    <h3><a href="product.html?id=${b.id}">${bt(b)}</a></h3>
+    <div class="au">${b.a}</div>
+    <div class="stars">${stars(b.r)}<small>${b.r} (${b.n})</small></div>
+    <div class="row"><div class="price">${money(b.p)}</div><button class="add" data-add="${b.id}">${tr('add')}</button></div>
+  </article>`;
+}
+function tilt(root){
+  $$('.card',root).forEach(card=>{
+    card.addEventListener('mousemove',e=>{
+      const r=card.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;
+      card.style.transform=`perspective(900px) rotateX(${-y*6}deg) rotateY(${x*6}deg) translateY(-4px)`;
+    });
+    card.addEventListener('mouseleave',()=>card.style.transform='');
+  });
+}
+document.addEventListener('click',e=>{
+  const a=e.target.closest('[data-add]'); if(a){addToCart(+a.dataset.add);return}
+  const f=e.target.closest('.fav'); if(f){e.preventDefault();toggleFav(+f.dataset.id)}
+});
+
+/* ---------- Qidiruv ---------- */
+const qEl=$('#q'), sug=$('#sug');
+function searchBooks(q){
+  q=q.trim().toLowerCase(); if(!q)return [];
+  return BOOKS.filter(b=>Object.values(b.t).some(t=>t.toLowerCase().includes(q))||b.a.toLowerCase().includes(q));
+}
+qEl.addEventListener('input',()=>{
+  const res=searchBooks(qEl.value).slice(0,6);
+  if(!qEl.value.trim()){sug.style.display='none';return}
+  sug.innerHTML = res.length ? res.map(b=>`<a href="product.html?id=${b.id}"><div class="mini">${coverHTML(b,5)}</div><div>${bt(b)}<small>${b.a} · ${money(b.p)}</small></div></a>`).join('')
+    : `<div style="padding:14px;color:var(--muted);font-size:14px">${tr('nores')}</div>`;
+  sug.style.display='block';
+});
+qEl.addEventListener('keydown',e=>{if(e.key==='Enter'&&qEl.value.trim())location.href='catalog.html?q='+encodeURIComponent(qEl.value.trim())});
+document.addEventListener('click',e=>{if(!e.target.closest('.search'))sug.style.display='none'});
+
+$('#lang').addEventListener('change',e=>{lang=e.target.value;LS.set('kx_lang',lang);applyLang();renderAll()});
+$('#theme').addEventListener('click',()=>{theme=theme==='dark'?'light':'dark';LS.set('kx_theme',theme);applyTheme()});
+$('#burger').addEventListener('click',()=>$('#links').classList.toggle('show'));
+
+/* =====================================================
+   SAHIFAGA XOS KOD  (favorites.html)
+   ===================================================== */
+let sortBy = 'added';
+
+function sortedFavs(){
+  // favs massivida oxirgi qo'shilgani oxirida — "qo'shilgan tartib" uchun teskari
+  let list = favs.map(id=>BOOKS.find(b=>b.id===id)).filter(Boolean);
+  const s = {
+    added:null,
+    asc:(a,b)=>a.p-b.p, desc:(a,b)=>b.p-a.p, rate:(a,b)=>b.r-a.r||b.n-a.n,
+    az:(a,b)=>bt(a).localeCompare(bt(b),lang)
+  }[sortBy];
+  if(!s) return list.reverse();
+  return list.sort(s);
+}
+
+function renderAll(){
+  const page=$('#page'), list=sortedFavs();
+  if(!list.length){
+    const rec=[...BOOKS].sort((a,b)=>b.n-a.n).slice(0,4);
+    page.innerHTML=`
+      <div class="empty"><div class="ico">💔</div><h2>${tr('emptyT')}</h2><p>${tr('emptyP')}</p><a class="btn primary" href="catalog.html">${tr('toCatalog')}</a></div>
+      <section class="rec"><h2>${tr('recT')}</h2><div class="grid" id="grid">${rec.map(cardHTML).join('')}</div></section>`;
+    tilt($('#grid')); return;
+  }
+  const total=list.reduce((s,b)=>s+b.p,0);
+  page.innerHTML=`
+    <div class="bar">
+      <div class="info">${tr('inList')} <b>${list.length}</b> ${tr('books')}<br>${tr('sumLbl')} <b>${money(total)}</b></div>
+      <div class="acts">
+        <select class="sortsel" id="sort">
+          ${[['added','sAdded'],['asc','sAsc'],['desc','sDesc'],['rate','sRate'],['az','sAz']].map(([v,k])=>`<option value="${v}" ${sortBy===v?'selected':''}>${tr(k)}</option>`).join('')}
+        </select>
+        <button class="btn primary" id="addAll">🛒 ${tr('addAll')}</button>
+        <button class="btn ghost" id="clearAll">✕ ${tr('clearAll')}</button>
+      </div>
+    </div>
+    <div class="grid" id="grid">${list.map(cardHTML).join('')}</div>`;
+  tilt($('#grid'));
+  $('#sort').onchange=e=>{sortBy=e.target.value;renderAll()};
+  $('#addAll').onclick=()=>{
+    list.forEach(b=>{if(!cart[b.id])addToCart(b.id,1,true)});
+    toast(`${list.length} ${tr('allAdded')}`);
+  };
+  $('#clearAll').onclick=()=>{favs=[];LS.set('kx_favs',favs);updateCounts();renderAll();toast(tr('favDel'))};
+}
+
+// kitob sevimlilardan olib tashlansa, kartochka silliq yo'qoladi
+function onFavChange(id){
+  const card=$(`#grid .card[data-id="${id}"]`);
+  if(card && !favs.includes(id)){card.classList.add('gone');setTimeout(renderAll,280)}
+  else if(card && favs.includes(id)){/* bo'sh holatdagi tavsiyadan qo'shilgan */ renderAll()}
+}
+
+/* ---------- Start ---------- */
+applyTheme();applyLang();updateCounts();renderAll();
+</script>
+</body>
+</html>

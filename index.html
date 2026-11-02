@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="uz" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kitobxona — Onlayn kitob do'koni</title>
+<meta name="description" content="Kitobxona — eng yaxshi kitoblar onlayn do'koni. Yetkazib berish butun O'zbekiston bo'ylab.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#faf6ef; --bg2:#f1eadd; --card:#ffffff; --text:#2a211b; --muted:#7a6b5d;
+  --primary:#b4532a; --primary2:#e08a3c; --accent:#1f6f6b; --border:#e6dccb;
+  --shadow:0 10px 30px rgba(80,50,20,.12); --radius:18px;
+}
+[data-theme="dark"]{
+  --bg:#14110f; --bg2:#1c1814; --card:#211c17; --text:#f3ebe0; --muted:#a8998a;
+  --primary:#e08a3c; --primary2:#f2b266; --accent:#4fc1b9; --border:#352d25;
+  --shadow:0 10px 30px rgba(0,0,0,.5);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);transition:background .4s,color .4s;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+h1,h2,h3{font-family:'Playfair Display',serif}
+.container{max-width:1200px;margin:0 auto;padding:0 20px}
+
+/* ============ INTRO 3D BOOK ============ */
+#intro{position:fixed;inset:0;z-index:1000;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:radial-gradient(circle at 50% 40%,#3a2616,#120b06 70%);transition:opacity .9s,visibility .9s;perspective:1600px;overflow:hidden}
+#intro.hide{opacity:0;visibility:hidden}
+#intro .dust{position:absolute;inset:0;pointer-events:none}
+#intro .dust i{position:absolute;width:3px;height:3px;border-radius:50%;background:rgba(255,220,160,.5);animation:float 8s linear infinite}
+@keyframes float{from{transform:translateY(100vh)}to{transform:translateY(-10vh)}}
+.stage{width:260px;height:360px;position:relative;transform-style:preserve-3d;transition:transform 1.6s cubic-bezier(.6,.05,.2,1);
+  transform:rotateX(10deg) rotateY(-28deg);cursor:pointer;animation:bob 4s ease-in-out infinite}
+.stage.open{animation:none;transform:rotateX(0) rotateY(0) translateX(135px)}
+@keyframes bob{0%,100%{transform:rotateX(10deg) rotateY(-28deg) translateY(0)}50%{transform:rotateX(10deg) rotateY(-20deg) translateY(-14px)}}
+.stage>*{position:absolute}
+.cover{inset:0;transform-origin:left center;transform-style:preserve-3d;transition:transform 1.5s cubic-bezier(.6,.05,.2,1);transform:translateZ(20px);z-index:5}
+.stage.open .cover{transform:translateZ(20px) rotateY(-172deg)}
+.cover .f{position:absolute;inset:0;backface-visibility:hidden;border-radius:4px 12px 12px 4px}
+.cover .out{background:linear-gradient(135deg,#7a2e12,#b4532a 55%,#8c3a18);box-shadow:inset 0 0 0 8px rgba(255,210,140,.18),inset 6px 0 14px rgba(0,0,0,.35);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30px;color:#ffe7b8}
+.cover .out .frame{position:absolute;inset:18px;border:2px solid rgba(255,210,140,.55);border-radius:6px}
+.cover .out h2{font-size:34px;letter-spacing:2px;text-shadow:0 2px 6px rgba(0,0,0,.5)}
+.cover .out p{font-size:12px;letter-spacing:5px;margin-top:10px;opacity:.85;text-transform:uppercase}
+.cover .out .ornament{font-size:44px;margin-bottom:14px}
+.cover .in{transform:rotateY(180deg);background:#f4e8cf;box-shadow:inset -6px 0 14px rgba(0,0,0,.18)}
+.pg{inset:0;background:#fbf3e1;border-radius:2px 8px 8px 2px;box-shadow:inset 4px 0 10px rgba(0,0,0,.08)}
+.pg.p1{transform:translateZ(14px)}.pg.p2{transform:translateZ(8px)}.pg.p3{transform:translateZ(2px)}
+.pg.last{transform:translateZ(-4px);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:26px;color:#3b2a1c}
+.pg.last h3{font-size:26px;margin-bottom:12px}
+.pg.last p{font-size:13px;line-height:1.6;color:#6b5844;margin-bottom:18px}
+.back{inset:0;transform:translateZ(-20px);background:#7a2e12;border-radius:4px 12px 12px 4px}
+.spine{width:40px;height:100%;left:-20px;top:0;background:linear-gradient(90deg,#5e210c,#9a4219,#5e210c);transform:rotateY(90deg)}
+.edge{width:40px;height:100%;right:-20px;top:0;background:repeating-linear-gradient(0deg,#f3e6c8 0 2px,#d9c9a3 2px 3px);transform:rotateY(90deg)}
+.hint{margin-top:70px;color:#f0d7a8;text-align:center;font-size:14px;letter-spacing:1px;transition:opacity .5s}
+.hint b{display:block;font-family:'Playfair Display',serif;font-size:22px;margin-bottom:6px}
+.hint .pulse{display:inline-block;margin-top:10px;padding:10px 22px;border:1px solid #f0d7a8;border-radius:30px;animation:pulse 2s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(240,215,168,.5)}100%{box-shadow:0 0 0 18px rgba(240,215,168,0)}}
+#skip{position:absolute;top:20px;right:24px;color:#d9c39a;font-size:13px;opacity:.8}
+#skip:hover{opacity:1}
+
+/* ============ HEADER ============ */
+header{position:sticky;top:0;z-index:100;background:color-mix(in srgb,var(--bg) 85%,transparent);backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}
+.nav{display:flex;align-items:center;gap:18px;height:70px}
+.logo{display:flex;align-items:center;gap:10px;font-family:'Playfair Display',serif;font-weight:800;font-size:24px}
+.logo span{display:grid;place-items:center;width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,var(--primary),var(--primary2));color:#fff;font-size:20px}
+.links{display:flex;gap:6px;margin-left:12px}
+.links a{padding:8px 14px;border-radius:10px;font-weight:500;font-size:15px;color:var(--muted);transition:.2s}
+.links a:hover,.links a.active{background:var(--bg2);color:var(--text)}
+.search{position:relative;flex:1;max-width:380px;margin-left:auto}
+.search input{width:100%;padding:11px 16px 11px 42px;border-radius:30px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:14px;outline:none;transition:.2s}
+.search input:focus{border-color:var(--primary);box-shadow:0 0 0 4px color-mix(in srgb,var(--primary) 18%,transparent)}
+.search svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:18px;height:18px;color:var(--muted)}
+#sug{position:absolute;top:calc(100% + 8px);left:0;right:0;background:var(--card);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow);overflow:hidden;display:none;z-index:50}
+#sug a{display:flex;gap:12px;align-items:center;padding:10px 14px;font-size:14px}
+#sug a:hover{background:var(--bg2)}
+#sug .mini{width:30px;height:42px;border-radius:3px;flex-shrink:0}
+#sug small{color:var(--muted);display:block}
+.tools{display:flex;align-items:center;gap:8px}
+.ibtn{position:relative;width:42px;height:42px;border-radius:12px;display:grid;place-items:center;background:var(--card);border:1px solid var(--border);transition:.2s}
+.ibtn:hover{transform:translateY(-2px);border-color:var(--primary)}
+.ibtn svg{width:20px;height:20px}
+.badge{position:absolute;top:-6px;right:-6px;min-width:19px;height:19px;padding:0 5px;border-radius:10px;background:var(--primary);color:#fff;font-size:11px;font-weight:700;display:grid;place-items:center}
+.badge:empty,.badge[data-n="0"]{display:none}
+select.lang{height:42px;padding:0 10px;border-radius:12px;border:1px solid var(--border);background:var(--card);color:var(--text);font-weight:600;cursor:pointer;outline:none}
+.burger{display:none}
+
+/* ============ HERO ============ */
+.hero{position:relative;padding:70px 0 90px;overflow:hidden}
+.hero::before{content:"";position:absolute;width:620px;height:620px;right:-160px;top:-180px;border-radius:50%;background:radial-gradient(circle,color-mix(in srgb,var(--primary2) 35%,transparent),transparent 70%)}
+.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:40px;align-items:center;position:relative}
+.tag{display:inline-block;padding:7px 14px;border-radius:30px;background:var(--bg2);border:1px solid var(--border);font-size:13px;font-weight:600;color:var(--primary);margin-bottom:18px}
+.hero h1{font-size:clamp(38px,5.4vw,68px);line-height:1.08;margin-bottom:20px}
+.hero h1 em{font-style:normal;background:linear-gradient(90deg,var(--primary),var(--primary2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p.lead{color:var(--muted);font-size:18px;line-height:1.7;max-width:520px;margin-bottom:30px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:14px 26px;border-radius:14px;font-weight:600;font-size:15px;transition:.25s}
+.btn.primary{background:linear-gradient(135deg,var(--primary),var(--primary2));color:#fff;box-shadow:0 10px 24px color-mix(in srgb,var(--primary) 40%,transparent)}
+.btn.primary:hover{transform:translateY(-3px)}
+.btn.ghost{border:1px solid var(--border);background:var(--card);margin-left:10px}
+.btn.ghost:hover{border-color:var(--primary)}
+.stats{display:flex;gap:34px;margin-top:40px}
+.stats b{font-family:'Playfair Display',serif;font-size:30px;display:block}
+.stats span{color:var(--muted);font-size:13px}
+.hero-3d{height:460px;display:grid;place-items:center;perspective:1400px}
+.hbook{position:relative;width:240px;height:340px;transform-style:preserve-3d;animation:spin 14s linear infinite}
+@keyframes spin{from{transform:rotateX(-8deg) rotateY(0)}to{transform:rotateX(-8deg) rotateY(360deg)}}
+.hbook>div{position:absolute}
+.hbook .fr{inset:0;transform:translateZ(22px);border-radius:4px 10px 10px 4px}
+.hbook .bk{inset:0;transform:translateZ(-22px) rotateY(180deg);border-radius:4px 10px 10px 4px}
+.hbook .sp{width:44px;height:100%;left:-22px;transform:rotateY(-90deg)}
+.hbook .ed{width:44px;height:100%;right:-22px;background:repeating-linear-gradient(0deg,#f3e6c8 0 2px,#d9c9a3 2px 3px);transform:rotateY(90deg)}
+.hbook .tp{width:100%;height:44px;top:-22px;background:#efe2c2;transform:rotateX(90deg)}
+.hbook .bt{width:100%;height:44px;bottom:-22px;background:#efe2c2;transform:rotateX(-90deg)}
+.shadow{position:absolute;bottom:20px;width:240px;height:30px;border-radius:50%;background:radial-gradient(rgba(0,0,0,.35),transparent 70%);filter:blur(6px)}
+
+/* ============ COVERS ============ */
+.cov{position:relative;width:100%;height:100%;padding:14px 12px;color:#fff;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden;border-radius:inherit;text-align:left}
+.cov::before{content:"";position:absolute;inset:0;background:linear-gradient(120deg,rgba(255,255,255,.22),transparent 40%,rgba(0,0,0,.25));pointer-events:none}
+.cov::after{content:"";position:absolute;left:8px;top:0;bottom:0;width:2px;background:rgba(0,0,0,.2)}
+.cov .ct{font-family:'Playfair Display',serif;font-weight:700;line-height:1.15;text-shadow:0 2px 6px rgba(0,0,0,.4);font-size:1em;position:relative}
+.cov .ca{font-size:.62em;letter-spacing:1.5px;text-transform:uppercase;opacity:.9;position:relative}
+.cov .cg{font-size:2.2em;opacity:.9;position:relative}
+
+/* ============ SECTIONS ============ */
+section{padding:70px 0}
+.sec-head{display:flex;align-items:end;justify-content:space-between;margin-bottom:34px;gap:20px}
+.sec-head h2{font-size:clamp(28px,3.4vw,40px)}
+.sec-head p{color:var(--muted);margin-top:6px}
+.sec-head a{color:var(--primary);font-weight:600;white-space:nowrap}
+.chips{display:flex;gap:12px;flex-wrap:wrap}
+.chip{display:flex;align-items:center;gap:10px;padding:14px 22px;border-radius:16px;background:var(--card);border:1px solid var(--border);font-weight:600;transition:.25s}
+.chip:hover{transform:translateY(-4px);border-color:var(--primary);box-shadow:var(--shadow)}
+.chip i{font-style:normal;font-size:22px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:26px}
+.card{position:relative;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;transition:transform .35s,box-shadow .35s;transform-style:preserve-3d;display:flex;flex-direction:column}
+.card:hover{box-shadow:var(--shadow)}
+.card .bookwrap{perspective:900px;height:250px;display:grid;place-items:center;margin-bottom:14px}
+.card .bk3{width:150px;height:222px;transform-style:preserve-3d;transform:rotateY(-18deg);transition:transform .6s cubic-bezier(.2,.8,.2,1);position:relative}
+.card:hover .bk3{transform:rotateY(-2deg) scale(1.06)}
+.bk3 .front{position:absolute;inset:0;border-radius:3px 8px 8px 3px;box-shadow:6px 8px 18px rgba(0,0,0,.35);font-size:15px}
+.bk3 .side{position:absolute;left:0;top:2px;width:14px;height:calc(100% - 4px);background:#efe2c2;transform-origin:left;transform:rotateY(90deg) translateX(-14px);}
+.card h3{font-size:17px;line-height:1.3;margin-bottom:4px;font-family:'Inter',sans-serif;font-weight:600}
+.card .au{color:var(--muted);font-size:13px;margin-bottom:8px}
+.stars{color:#f5a623;font-size:13px;letter-spacing:1px}
+.stars small{color:var(--muted);letter-spacing:0;margin-left:4px}
+.card .row{display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:12px}
+.price{font-weight:700;font-size:17px}
+.add{padding:9px 14px;border-radius:12px;background:var(--primary);color:#fff;font-size:13px;font-weight:600;transition:.2s}
+.add:hover{filter:brightness(1.1);transform:scale(1.05)}
+.fav{position:absolute;top:14px;right:14px;z-index:3;width:36px;height:36px;border-radius:50%;background:var(--bg);border:1px solid var(--border);display:grid;place-items:center;transition:.25s}
+.fav svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2}
+.fav:hover{transform:scale(1.15)}
+.fav.on{color:#e0394f;background:#ffe9ec;border-color:#f6b6c0}
+.fav.on svg{fill:currentColor}
+.sale{position:absolute;top:14px;left:14px;z-index:3;background:var(--accent);color:#fff;font-size:12px;font-weight:700;padding:4px 10px;border-radius:20px}
+.empty{grid-column:1/-1;text-align:center;color:var(--muted);padding:40px}
+
+.features{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:22px}
+.feat{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:28px;transition:.3s}
+.feat:hover{transform:translateY(-6px);box-shadow:var(--shadow)}
+.feat i{font-style:normal;font-size:34px;display:block;margin-bottom:14px}
+.feat h3{font-size:19px;margin-bottom:8px}
+.feat p{color:var(--muted);font-size:14px;line-height:1.6}
+.banner{border-radius:28px;padding:56px;background:linear-gradient(135deg,var(--primary),var(--primary2));color:#fff;display:flex;justify-content:space-between;align-items:center;gap:30px;flex-wrap:wrap;position:relative;overflow:hidden}
+.banner::after{content:"📚";position:absolute;right:30px;bottom:-30px;font-size:180px;opacity:.15}
+.banner h2{font-size:clamp(26px,3.4vw,38px);margin-bottom:8px}
+.banner .btn{background:#fff;color:var(--primary)}
+
+footer{background:var(--bg2);border-top:1px solid var(--border);padding:50px 0 24px;margin-top:40px}
+.fgrid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:30px}
+footer h4{margin-bottom:14px}
+footer li{list-style:none;margin-bottom:9px;color:var(--muted);font-size:14px}
+footer li a:hover{color:var(--primary)}
+.copy{text-align:center;color:var(--muted);font-size:13px;margin-top:36px;padding-top:20px;border-top:1px solid var(--border)}
+
+#toast{position:fixed;left:50%;bottom:30px;transform:translate(-50%,100px);background:var(--text);color:var(--bg);padding:13px 22px;border-radius:30px;font-weight:600;font-size:14px;z-index:2000;transition:.4s;opacity:0}
+#toast.show{transform:translate(-50%,0);opacity:1}
+.reveal{opacity:0;transform:translateY(30px);transition:opacity .7s,transform .7s}
+.reveal.in{opacity:1;transform:none}
+
+@media(max-width:900px){
+  .hero-grid{grid-template-columns:1fr}.hero-3d{height:380px;order:-1}
+  .links{display:none;position:absolute;top:70px;left:0;right:0;background:var(--bg);flex-direction:column;padding:12px 20px;border-bottom:1px solid var(--border)}
+  .links.show{display:flex}.burger{display:grid}
+  .fgrid{grid-template-columns:1fr 1fr}
+  .search{max-width:none}
+}
+@media(max-width:600px){
+  .nav{gap:8px}.logo b{display:none}.stage{transform:scale(.8) rotateX(10deg) rotateY(-28deg)}
+  .stage.open{transform:scale(.8) translateX(110px)}.banner{padding:34px}.grid{grid-template-columns:repeat(2,1fr);gap:14px}
+  .card{padding:12px}.card .bookwrap{height:200px}.bk3{transform:scale(.85) rotateY(-18deg)!important}
+}
+</style>
+</head>
+<body>
+
+<!-- ============ 3D INTRO ============ -->
+<div id="intro">
+  <div class="dust" id="dust"></div>
+  <button id="skip" data-i18n="skip">O'tkazib yuborish →</button>
+  <div class="stage" id="stage">
+    <div class="back"></div>
+    <div class="spine"></div>
+    <div class="edge"></div>
+    <div class="pg last">
+      <h3 data-i18n="introWelcome">Xush kelibsiz!</h3>
+      <p data-i18n="introText">Minglab kitoblar sizni kutmoqda. Varaqlang, o'qing va yoqsa — buyurtma bering.</p>
+      <button class="btn primary" id="enter" data-i18n="enter">Do'konga kirish</button>
+    </div>
+    <div class="pg p3"></div><div class="pg p2"></div><div class="pg p1"></div>
+    <div class="cover">
+      <div class="f out">
+        <div class="frame"></div>
+        <div class="ornament">❦</div>
+        <h2>KITOBXONA</h2>
+        <p data-i18n="introSub">Onlayn kitob do'koni</p>
+      </div>
+      <div class="f in"></div>
+    </div>
+  </div>
+  <div class="hint" id="hint"><b data-i18n="introTitle">Kitobni oching</b><span class="pulse" data-i18n="introHint">Bosing va varaqlang</span></div>
+</div>
+
+<!-- ============ HEADER ============ -->
+<header>
+  <div class="container nav">
+    <a href="index.html" class="logo"><span>📖</span><b>Kitobxona</b></a>
+    <nav class="links" id="links">
+      <a href="index.html" class="active" data-i18n="navHome">Bosh sahifa</a>
+      <a href="catalog.html" data-i18n="navCatalog">Katalog</a>
+      <a href="favorites.html" data-i18n="navFav">Sevimlilar</a>
+      <a href="cart.html" data-i18n="navCart">Savat</a>
+    </nav>
+    <div class="search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input id="q" type="search" autocomplete="off" data-i18n-ph="search" placeholder="Kitob yoki muallif qidirish...">
+      <div id="sug"></div>
+    </div>
+    <div class="tools">
+      <select class="lang" id="lang"><option value="uz">UZ</option><option value="ru">RU</option><option value="en">EN</option></select>
+      <button class="ibtn" id="theme" aria-label="theme"><span id="themeIco">🌙</span></button>
+      <a class="ibtn" href="favorites.html" aria-label="favorites"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-4.6-9.3-9.1C1 8.5 3 5 6.4 5c2 0 3.6 1.1 4.6 2.6h2C14 6.1 15.600 5 17.600 5 21 5 23 8.500 21.300 11.900 19 16.400 12 21 12 21z"/></svg><span class="badge" id="favCount" data-n="0"></span></a>
+      <a class="ibtn" href="cart.html" aria-label="cart"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="20" r="1.500"/><circle cx="18" cy="20" r="1.500"/><path d="M2 3h3l2.600 12.400a2 2 0 0 0 2 1.600h7.800a2 2 0 0 0 2-1.500L21 8H6"/></svg><span class="badge" id="cartCount" data-n="0"></span></a>
+      <button class="ibtn burger" id="burger" aria-label="menu">☰</button>
+    </div>
+  </div>
+</header>
+
+<!-- ============ HERO ============ -->
+<main>
+<section class="hero">
+  <div class="container hero-grid">
+    <div>
+      <span class="tag" data-i18n="heroTag">📚 Yangi mavsum — 20% gacha chegirma</span>
+      <h1><span data-i18n="heroH1a">Har bir kitob —</span> <em data-i18n="heroH1b">yangi dunyo</em></h1>
+      <p class="lead" data-i18n="heroLead">Badiiy adabiyot, biznes, bolalar kitoblari va darsliklar. Tez yetkazib berish va qulay to'lov bilan butun O'zbekiston bo'ylab.</p>
+      <a href="catalog.html" class="btn primary" data-i18n="heroBtn">Katalogga o'tish →</a>
+      <a href="#best" class="btn ghost" data-i18n="heroBtn2">Bestsellerlar</a>
+      <div class="stats">
+        <div><b data-count="12000">0</b><span data-i18n="st1">kitob</span></div>
+        <div><b data-count="45000">0</b><span data-i18n="st2">mijoz</span></div>
+        <div><b data-count="14">0</b><span data-i18n="st3">viloyat</span></div>
+      </div>
+    </div>
+    <div class="hero-3d">
+      <div class="shadow"></div>
+      <div class="hbook" id="hbook"></div>
+    </div>
+  </div>
+</section>
+
+<section style="padding-top:0">
+  <div class="container reveal">
+    <div class="sec-head"><div><h2 data-i18n="catsTitle">Janrlar</h2><p data-i18n="catsSub">O'zingizga yoqqan yo'nalishni tanlang</p></div></div>
+    <div class="chips" id="chips"></div>
+  </div>
+</section>
+
+<section id="best" style="padding-top:20px">
+  <div class="container reveal">
+    <div class="sec-head"><div><h2 data-i18n="bestTitle">Bestsellerlar</h2><p data-i18n="bestSub">Eng ko'p sotilgan kitoblar</p></div><a href="catalog.html" data-i18n="all">Hammasi →</a></div>
+    <div class="grid" id="bestGrid"></div>
+  </div>
+</section>
+
+<section>
+  <div class="container reveal">
+    <div class="banner">
+      <div><h2 data-i18n="banTitle">Birinchi buyurtmaga 10% chegirma</h2><p data-i18n="banText">Promo-kod: KITOB10 — buyurtma berayotganda kiriting</p></div>
+      <a href="catalog.html" class="btn" data-i18n="banBtn">Xarid qilish</a>
+    </div>
+  </div>
+</section>
+
+<section style="padding-top:0">
+  <div class="container reveal">
+    <div class="sec-head"><div><h2 data-i18n="newTitle">Yangi kelganlar</h2><p data-i18n="newSub">Do'konimizga yaqinda qo'shilgan kitoblar</p></div><a href="catalog.html" data-i18n="all">Hammasi →</a></div>
+    <div class="grid" id="newGrid"></div>
+  </div>
+</section>
+
+<section style="padding-top:0">
+  <div class="container reveal">
+    <div class="features">
+      <div class="feat"><i>🚚</i><h3 data-i18n="f1t">Tez yetkazib berish</h3><p data-i18n="f1p">Toshkent bo'ylab 1 kun, viloyatlarga 2–4 kun ichida.</p></div>
+      <div class="feat"><i>💳</i><h3 data-i18n="f2t">Qulay to'lov</h3><p data-i18n="f2p">Naqd, karta yoki Click/Payme orqali to'lang.</p></div>
+      <div class="feat"><i>🎁</i><h3 data-i18n="f3t">Sovg'a o'rami</h3><p data-i18n="f3p">Kitobni chiroyli o'rab, sovg'a sifatida yuboramiz.</p></div>
+      <div class="feat"><i>🔄</i><h3 data-i18n="f4t">Qaytarish kafolati</h3><p data-i18n="f4p">Sifatsiz kitobni 7 kun ichida almashtirib beramiz.</p></div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="container">
+    <div class="fgrid">
+      <div><a href="index.html" class="logo"><span>📖</span><b>Kitobxona</b></a><p style="color:var(--muted);margin-top:14px;font-size:14px;line-height:1.7;max-width:320px" data-i18n="fAbout">Kitob sevuvchilar uchun onlayn do'kon. Sifatli kitoblar, halol narxlar.</p></div>
+      <div><h4 data-i18n="fMenu">Menyu</h4><ul><li><a href="index.html" data-i18n="navHome">Bosh sahifa</a></li><li><a href="catalog.html" data-i18n="navCatalog">Katalog</a></li><li><a href="favorites.html" data-i18n="navFav">Sevimlilar</a></li><li><a href="cart.html" data-i18n="navCart">Savat</a></li></ul></div>
+      <div><h4 data-i18n="fContact">Aloqa</h4><ul><li>📞 +998 90 123 45 67</li><li>✉️ info@kitobxona.uz</li><li>📍 Toshkent</li></ul></div>
+      <div><h4 data-i18n="fSocial">Ijtimoiy tarmoq</h4><ul><li>Telegram</li><li>Instagram</li><li>Facebook</li></ul></div>
+    </div>
+    <div class="copy">© 2026 Kitobxona. <span data-i18n="rights">Barcha huquqlar himoyalangan.</span></div>
+  </div>
+</footer>
+
+<div id="toast"></div>
+
+<script>
+/* =====================================================
+   SHARED CORE  (har bir HTML faylda bir xil)
+   ===================================================== */
+const BOOKS = [
+  {id:1, t:{uz:"O'tkan kunlar",ru:"Минувшие дни",en:"Bygone Days"}, a:"Abdulla Qodiriy", g:"fiction", p:68000, old:80000, r:4.9, n:1280, c:["#7a2e12","#d9822b"], ic:"❦", y:1925, pg:420},
+  {id:2, t:{uz:"Mehrobdan chayon",ru:"Скорпион из алтаря",en:"Scorpion from the Altar"}, a:"Abdulla Qodiriy", g:"fiction", p:59000, r:4.8, n:910, c:["#1f4e5f","#4fa3a5"], ic:"✦", y:1929, pg:360},
+  {id:3, t:{uz:"Atomic Habits",ru:"Атомные привычки",en:"Atomic Habits"}, a:"James Clear", g:"selfdev", p:95000, old:115000, r:4.9, n:2310, c:["#c0392b","#f39c12"], ic:"⚛", y:2018, pg:320},
+  {id:4, t:{uz:"Boy ota, kambag'al ota",ru:"Богатый папа, бедный папа",en:"Rich Dad Poor Dad"}, a:"Robert Kiyosaki", g:"business", p:79000, r:4.7, n:1840, c:["#14532d","#65a30d"], ic:"$", y:1997, pg:336},
+  {id:5, t:{uz:"Kichkina shahzoda",ru:"Маленький принц",en:"The Little Prince"}, a:"Antoine de Saint-Exupéry", g:"kids", p:52000, r:4.9, n:3020, c:["#1e3a8a","#60a5fa"], ic:"☆", y:1943, pg:96},
+  {id:6, t:{uz:"Ikki eshik orasi",ru:"Между двух дверей",en:"Between Two Doors"}, a:"O'tkir Hoshimov", g:"fiction", p:64000, r:4.8, n:760, c:["#4a1d6b","#a855f7"], ic:"❖", y:1986, pg:380},
+  {id:7, t:{uz:"Zero to One",ru:"От нуля к единице",en:"Zero to One"}, a:"Peter Thiel", g:"business", p:88000, old:99000, r:4.6, n:1120, c:["#111827","#6b7280"], ic:"0→1", y:2014, pg:224},
+  {id:8, t:{uz:"1984",ru:"1984",en:"1984"}, a:"George Orwell", g:"fiction", p:72000, r:4.8, n:2640, c:["#7f1d1d","#111"], ic:"👁", y:1949, pg:328},
+  {id:9, t:{uz:"Sapiens",ru:"Sapiens",en:"Sapiens"}, a:"Yuval Noah Harari", g:"science", p:105000, r:4.8, n:1980, c:["#b45309","#fbbf24"], ic:"☼", y:2011, pg:512},
+  {id:10, t:{uz:"Python asoslari",ru:"Основы Python",en:"Python Fundamentals"}, a:"Eric Matthes", g:"tech", p:125000, old:150000, r:4.7, n:640, c:["#0f3d5e","#3b82f6"], ic:"</>", y:2023, pg:544},
+  {id:11, t:{uz:"Alisa mo'jizalar mamlakatida",ru:"Алиса в стране чудес",en:"Alice in Wonderland"}, a:"Lewis Carroll", g:"kids", p:48000, r:4.7, n:870, c:["#be185d","#f9a8d4"], ic:"♠", y:1865, pg:200},
+  {id:12, t:{uz:"Deep Work",ru:"Глубокая работа",en:"Deep Work"}, a:"Cal Newport", g:"selfdev", p:82000, r:4.6, n:930, c:["#134e4a","#2dd4bf"], ic:"◎", y:2016, pg:304}
+];
+const GENRES = {
+  fiction:{ic:"📖",uz:"Badiiy",ru:"Художественная",en:"Fiction"},
+  business:{ic:"💼",uz:"Biznes",ru:"Бизнес",en:"Business"},
+  selfdev:{ic:"🌱",uz:"Rivojlanish",ru:"Саморазвитие",en:"Self-growth"},
+  kids:{ic:"🧸",uz:"Bolalar",ru:"Детские",en:"Kids"},
+  science:{ic:"🔬",uz:"Ilmiy",ru:"Научная",en:"Science"},
+  tech:{ic:"💻",uz:"Texnologiya",ru:"Технологии",en:"Tech"}
+};
+const I18N = {
+ uz:{skip:"O'tkazib yuborish →",introWelcome:"Xush kelibsiz!",introText:"Minglab kitoblar sizni kutmoqda. Varaqlang, o'qing va yoqsa — buyurtma bering.",enter:"Do'konga kirish",introSub:"Onlayn kitob do'koni",introTitle:"Kitobni oching",introHint:"Bosing va varaqlang",
+  navHome:"Bosh sahifa",navCatalog:"Katalog",navFav:"Sevimlilar",navCart:"Savat",search:"Kitob yoki muallif qidirish...",
+  heroTag:"📚 Yangi mavsum — 20% gacha chegirma",heroH1a:"Har bir kitob —",heroH1b:"yangi dunyo",heroLead:"Badiiy adabiyot, biznes, bolalar kitoblari va darsliklar. Tez yetkazib berish va qulay to'lov bilan butun O'zbekiston bo'ylab.",heroBtn:"Katalogga o'tish →",heroBtn2:"Bestsellerlar",st1:"kitob",st2:"mijoz",st3:"viloyat",
+  catsTitle:"Janrlar",catsSub:"O'zingizga yoqqan yo'nalishni tanlang",bestTitle:"Bestsellerlar",bestSub:"Eng ko'p sotilgan kitoblar",all:"Hammasi →",
+  banTitle:"Birinchi buyurtmaga 10% chegirma",banText:"Promo-kod: KITOB10 — buyurtma berayotganda kiriting",banBtn:"Xarid qilish",newTitle:"Yangi kelganlar",newSub:"Do'konimizga yaqinda qo'shilgan kitoblar",
+  f1t:"Tez yetkazib berish",f1p:"Toshkent bo'ylab 1 kun, viloyatlarga 2–4 kun ichida.",f2t:"Qulay to'lov",f2p:"Naqd, karta yoki Click/Payme orqali to'lang.",f3t:"Sovg'a o'rami",f3p:"Kitobni chiroyli o'rab, sovg'a sifatida yuboramiz.",f4t:"Qaytarish kafolati",f4p:"Sifatsiz kitobni 7 kun ichida almashtirib beramiz.",
+  fAbout:"Kitob sevuvchilar uchun onlayn do'kon. Sifatli kitoblar, halol narxlar.",fMenu:"Menyu",fContact:"Aloqa",fSocial:"Ijtimoiy tarmoq",rights:"Barcha huquqlar himoyalangan.",
+  add:"Savatga",added:"Savatga qo'shildi ✓",favAdd:"Sevimlilarga qo'shildi ♥",favDel:"Sevimlilardan olib tashlandi",som:"so'm",nores:"Hech narsa topilmadi"},
+ ru:{skip:"Пропустить →",introWelcome:"Добро пожаловать!",introText:"Тысячи книг ждут вас. Листайте, читайте и, если понравится, оформляйте заказ.",enter:"Войти в магазин",introSub:"Онлайн книжный магазин",introTitle:"Откройте книгу",introHint:"Нажмите и листайте",
+  navHome:"Главная",navCatalog:"Каталог",navFav:"Избранное",navCart:"Корзина",search:"Поиск книги или автора...",
+  heroTag:"📚 Новый сезон — скидки до 20%",heroH1a:"Каждая книга —",heroH1b:"новый мир",heroLead:"Художественная литература, бизнес, детские книги и учебники. Быстрая доставка и удобная оплата по всему Узбекистану.",heroBtn:"Перейти в каталог →",heroBtn2:"Бестселлеры",st1:"книг",st2:"клиентов",st3:"областей",
+  catsTitle:"Жанры",catsSub:"Выберите понравившееся направление",bestTitle:"Бестселлеры",bestSub:"Самые продаваемые книги",all:"Все →",
+  banTitle:"Скидка 10% на первый заказ",banText:"Промокод: KITOB10 — введите при оформлении заказа",banBtn:"Купить",newTitle:"Новинки",newSub:"Недавно добавленные книги",
+  f1t:"Быстрая доставка",f1p:"По Ташкенту 1 день, в регионы 2–4 дня.",f2t:"Удобная оплата",f2p:"Наличные, карта или Click/Payme.",f3t:"Подарочная упаковка",f3p:"Красиво упакуем книгу в подарок.",f4t:"Гарантия возврата",f4p:"Заменим бракованную книгу в течение 7 дней.",
+  fAbout:"Онлайн магазин для любителей книг. Качественные книги, честные цены.",fMenu:"Меню",fContact:"Контакты",fSocial:"Соцсети",rights:"Все права защищены.",
+  add:"В корзину",added:"Добавлено в корзину ✓",favAdd:"Добавлено в избранное ♥",favDel:"Удалено из избранного",som:"сум",nores:"Ничего не найдено"},
+ en:{skip:"Skip →",introWelcome:"Welcome!",introText:"Thousands of books await you. Flip through, read and order if you like it.",enter:"Enter the store",introSub:"Online bookstore",introTitle:"Open the book",introHint:"Tap and flip",
+  navHome:"Home",navCatalog:"Catalog",navFav:"Favorites",navCart:"Cart",search:"Search a book or author...",
+  heroTag:"📚 New season — up to 20% off",heroH1a:"Every book is",heroH1b:"a new world",heroLead:"Fiction, business, kids' books and textbooks. Fast delivery and easy payment across Uzbekistan.",heroBtn:"Go to catalog →",heroBtn2:"Bestsellers",st1:"books",st2:"customers",st3:"regions",
+  catsTitle:"Genres",catsSub:"Pick the direction you like",bestTitle:"Bestsellers",bestSub:"Most sold books",all:"View all →",
+  banTitle:"10% off your first order",banText:"Promo code: KITOB10 — enter it at checkout",banBtn:"Shop now",newTitle:"New arrivals",newSub:"Recently added to our store",
+  f1t:"Fast delivery",f1p:"1 day in Tashkent, 2–4 days to regions.",f2t:"Easy payment",f2p:"Cash, card or Click/Payme.",f3t:"Gift wrapping",f3p:"We wrap the book beautifully as a gift.",f4t:"Return guarantee",f4p:"Defective book replaced within 7 days.",
+  fAbout:"An online store for book lovers. Quality books, honest prices.",fMenu:"Menu",fContact:"Contact",fSocial:"Social",rights:"All rights reserved.",
+  add:"Add to cart",added:"Added to cart ✓",favAdd:"Added to favorites ♥",favDel:"Removed from favorites",som:"UZS",nores:"Nothing found"}
+};
+
+const LS = {
+  get(k,d){try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}},
+  set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+};
+let lang  = LS.get('kx_lang','uz');
+let theme = LS.get('kx_theme', matchMedia('(prefers-color-scheme: dark)').matches ? 'dark':'light');
+let cart  = LS.get('kx_cart',{});      // {id: qty}
+let favs  = LS.get('kx_favs',[]);      // [id]
+
+const $  = (s,r=document)=>r.querySelector(s);
+const $$ = (s,r=document)=>[...r.querySelectorAll(s)];
+const tr = k => (I18N[lang]&&I18N[lang][k]) || I18N.uz[k] || k;
+const money = n => n.toLocaleString('ru-RU').replace(/\u00a0/g,' ') + ' ' + tr('som');
+const bt = b => b.t[lang];
+
+function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove('show'),1800)}
+
+function applyLang(){
+  document.documentElement.lang = lang;
+  $$('[data-i18n]').forEach(el=>el.textContent = tr(el.dataset.i18n));
+  $$('[data-i18n-ph]').forEach(el=>el.placeholder = tr(el.dataset.i18nPh));
+  $('#lang').value = lang;
+}
+function applyTheme(){
+  document.documentElement.dataset.theme = theme;
+  $('#themeIco').textContent = theme==='dark' ? '☀️' : '🌙';
+}
+function updateCounts(){
+  const c = Object.values(cart).reduce((s,x)=>s+x,0);
+  $('#cartCount').textContent = c||''; $('#cartCount').dataset.n = c;
+  $('#favCount').textContent = favs.length||''; $('#favCount').dataset.n = favs.length;
+}
+function addToCart(id){cart[id]=(cart[id]||0)+1;LS.set('kx_cart',cart);updateCounts();toast(tr('added'))}
+function toggleFav(id){
+  const i=favs.indexOf(id);
+  if(i>-1){favs.splice(i,1);toast(tr('favDel'))}else{favs.push(id);toast(tr('favAdd'))}
+  LS.set('kx_favs',favs);updateCounts();
+  $$(`.fav[data-id="${id}"]`).forEach(b=>b.classList.toggle('on',favs.includes(id)));
+}
+// boshqa tab/sahifa bilan sinxron
+addEventListener('storage',e=>{
+  if(e.key==='kx_cart')cart=LS.get('kx_cart',{});
+  if(e.key==='kx_favs'){favs=LS.get('kx_favs',[]);$$('.fav').forEach(b=>b.classList.toggle('on',favs.includes(+b.dataset.id)))}
+  updateCounts();
+});
+
+function coverHTML(b,size){
+  return `<div class="cov" style="background:linear-gradient(145deg,${b.c[0]},${b.c[1]});${size?`font-size:${size}px`:''}">
+    <div class="cg">${b.ic}</div><div><div class="ct">${bt(b)}</div><div class="ca" style="margin-top:6px">${b.a}</div></div></div>`;
+}
+function stars(r){const f=Math.round(r);return '★'.repeat(f)+'☆'.repeat(5-f)}
+function cardHTML(b){
+  const sale = b.old ? `<span class="sale">-${Math.round((1-b.p/b.old)*100)}%</span>` : '';
+  return `<article class="card" data-id="${b.id}">
+    ${sale}
+    <button class="fav ${favs.includes(b.id)?'on':''}" data-id="${b.id}" aria-label="favorite"><svg viewBox="0 0 24 24"><path d="M12 21s-7-4.6-9.3-9.1C1 8.5 3 5 6.4 5c2 0 3.6 1.1 4.6 2.6h2C14 6.1 15.600 5 17.600 5 21 5 23 8.500 21.300 11.900 19 16.400 12 21 12 21z"/></svg></button>
+    <a href="product.html?id=${b.id}" class="bookwrap"><div class="bk3"><div class="front">${coverHTML(b,15)}</div><div class="side"></div></div></a>
+    <h3><a href="product.html?id=${b.id}">${bt(b)}</a></h3>
+    <div class="au">${b.a}</div>
+    <div class="stars">${stars(b.r)}<small>${b.r} (${b.n})</small></div>
+    <div class="row"><div class="price">${money(b.p)}</div><button class="add" data-add="${b.id}">${tr('add')}</button></div>
+  </article>`;
+}
+function renderGrid(el,list){
+  el.innerHTML = list.length ? list.map(cardHTML).join('') : `<div class="empty">${tr('nores')}</div>`;
+  $$('.card',el).forEach(card=>{
+    card.addEventListener('mousemove',e=>{
+      const r=card.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;
+      card.style.transform=`perspective(900px) rotateX(${-y*6}deg) rotateY(${x*6}deg) translateY(-4px)`;
+    });
+    card.addEventListener('mouseleave',()=>card.style.transform='');
+  });
+}
+document.addEventListener('click',e=>{
+  const a=e.target.closest('[data-add]'); if(a){addToCart(+a.dataset.add);return}
+  const f=e.target.closest('.fav'); if(f){e.preventDefault();toggleFav(+f.dataset.id)}
+});
+
+/* ---------- Qidiruv (live suggestions) ---------- */
+const qEl=$('#q'), sug=$('#sug');
+function searchBooks(q){
+  q=q.trim().toLowerCase(); if(!q)return [];
+  return BOOKS.filter(b=>Object.values(b.t).some(t=>t.toLowerCase().includes(q))||b.a.toLowerCase().includes(q));
+}
+qEl.addEventListener('input',()=>{
+  const res=searchBooks(qEl.value).slice(0,6);
+  if(!qEl.value.trim()){sug.style.display='none';return}
+  sug.innerHTML = res.length ? res.map(b=>`<a href="product.html?id=${b.id}"><div class="mini">${coverHTML(b,5)}</div><div>${bt(b)}<small>${b.a} · ${money(b.p)}</small></div></a>`).join('')
+    : `<div style="padding:14px;color:var(--muted);font-size:14px">${tr('nores')}</div>`;
+  sug.style.display='block';
+});
+qEl.addEventListener('keydown',e=>{if(e.key==='Enter'&&qEl.value.trim())location.href='catalog.html?q='+encodeURIComponent(qEl.value.trim())});
+document.addEventListener('click',e=>{if(!e.target.closest('.search'))sug.style.display='none'});
+
+/* ---------- Til / mavzu / menyu ---------- */
+$('#lang').addEventListener('change',e=>{lang=e.target.value;LS.set('kx_lang',lang);applyLang();renderAll()});
+$('#theme').addEventListener('click',()=>{theme=theme==='dark'?'light':'dark';LS.set('kx_theme',theme);applyTheme()});
+$('#burger').addEventListener('click',()=>$('#links').classList.toggle('show'));
+
+/* =====================================================
+   SAHIFAGA XOS KOD  (index.html)
+   ===================================================== */
+function renderChips(){
+  $('#chips').innerHTML = Object.entries(GENRES).map(([k,g])=>`<a class="chip" href="catalog.html?genre=${k}"><i>${g.ic}</i>${g[lang]}</a>`).join('');
+}
+function renderAll(){
+  renderChips();
+  renderGrid($('#bestGrid'),[...BOOKS].sort((a,b)=>b.n-a.n).slice(0,4));
+  renderGrid($('#newGrid'),[...BOOKS].sort((a,b)=>b.y-a.y).slice(0,8));
+  buildHeroBook();
+}
+function buildHeroBook(){
+  const b = BOOKS[2];
+  $('#hbook').innerHTML = `
+    <div class="fr">${coverHTML(b,22)}</div>
+    <div class="bk" style="background:linear-gradient(145deg,${b.c[1]},${b.c[0]})"></div>
+    <div class="sp" style="background:linear-gradient(90deg,${b.c[0]},${b.c[1]})"></div>
+    <div class="ed"></div><div class="tp"></div><div class="bt"></div>`;
+}
+
+/* Raqamlar animatsiyasi + scroll reveal */
+function countUp(){
+  $$('[data-count]').forEach(el=>{
+    const end=+el.dataset.count;let s=null;
+    const step=t=>{s=s||t;const p=Math.min((t-s)/1800,1);el.textContent=Math.floor(end*(1-Math.pow(1-p,3))).toLocaleString('ru-RU')+(p===1?'+':'');if(p<1)requestAnimationFrame(step)};
+    requestAnimationFrame(step);
+  });
+}
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.12});
+function initReveal(){$$('.reveal').forEach(el=>io.observe(el))}
+
+/* ---------- 3D intro kitob ---------- */
+(function intro(){
+  const box=$('#intro'), stage=$('#stage');
+  // changlar
+  $('#dust').innerHTML = Array.from({length:30},()=>`<i style="left:${Math.random()*100}%;animation-delay:-${Math.random()*8}s;animation-duration:${6+Math.random()*8}s"></i>`).join('');
+  let opened=false, closed=false;
+  const close=()=>{if(closed)return;closed=true;box.classList.add('hide');try{sessionStorage.setItem('kx_intro','1')}catch(e){};document.body.style.overflow='';countUp()};
+  if(sessionStorage.getItem('kx_intro')){box.style.display='none';return}
+  document.body.style.overflow='hidden';
+  const open=()=>{if(opened)return;opened=true;stage.classList.add('open');$('#hint').style.opacity=0};
+  stage.addEventListener('click',open);
+  // sichqoncha bilan kitobni aylantirish
+  box.addEventListener('mousemove',e=>{
+    if(opened)return;
+    const x=(e.clientX/innerWidth-.5)*30,y=(e.clientY/innerHeight-.5)*-14;
+    stage.style.animation='none';
+    stage.style.transform=`rotateX(${10+y}deg) rotateY(${-28+x}deg)`;
+  });
+  $('#enter').addEventListener('click',e=>{e.stopPropagation();close()});
+  $('#skip').addEventListener('click',close);
+})();
+
+/* ---------- Start ---------- */
+applyTheme();applyLang();updateCounts();renderAll();initReveal();
+if(document.getElementById('intro').style.display==='none')countUp();
+</script>
+</body>
+</html>

@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="uz" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Katalog — Kitobxona</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#faf6ef; --bg2:#f1eadd; --card:#ffffff; --text:#2a211b; --muted:#7a6b5d;
+  --primary:#b4532a; --primary2:#e08a3c; --accent:#1f6f6b; --border:#e6dccb;
+  --shadow:0 10px 30px rgba(80,50,20,.12); --radius:18px;
+}
+[data-theme="dark"]{
+  --bg:#14110f; --bg2:#1c1814; --card:#211c17; --text:#f3ebe0; --muted:#a8998a;
+  --primary:#e08a3c; --primary2:#f2b266; --accent:#4fc1b9; --border:#352d25;
+  --shadow:0 10px 30px rgba(0,0,0,.5);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);transition:background .4s,color .4s;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+h1,h2,h3{font-family:'Playfair Display',serif}
+.container{max-width:1200px;margin:0 auto;padding:0 20px}
+
+/* ============ HEADER ============ */
+header{position:sticky;top:0;z-index:100;background:color-mix(in srgb,var(--bg) 85%,transparent);backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}
+.nav{display:flex;align-items:center;gap:18px;height:70px}
+.logo{display:flex;align-items:center;gap:10px;font-family:'Playfair Display',serif;font-weight:800;font-size:24px}
+.logo span{display:grid;place-items:center;width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,var(--primary),var(--primary2));color:#fff;font-size:20px}
+.links{display:flex;gap:6px;margin-left:12px}
+.links a{padding:8px 14px;border-radius:10px;font-weight:500;font-size:15px;color:var(--muted);transition:.2s}
+.links a:hover,.links a.active{background:var(--bg2);color:var(--text)}
+.search{position:relative;flex:1;max-width:380px;margin-left:auto}
+.search input{width:100%;padding:11px 16px 11px 42px;border-radius:30px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:14px;outline:none;transition:.2s}
+.search input:focus{border-color:var(--primary);box-shadow:0 0 0 4px color-mix(in srgb,var(--primary) 18%,transparent)}
+.search svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:18px;height:18px;color:var(--muted)}
+.tools{display:flex;align-items:center;gap:8px}
+.ibtn{position:relative;width:42px;height:42px;border-radius:12px;display:grid;place-items:center;background:var(--card);border:1px solid var(--border);transition:.2s}
+.ibtn:hover{transform:translateY(-2px);border-color:var(--primary)}
+.ibtn svg{width:20px;height:20px}
+.badge{position:absolute;top:-6px;right:-6px;min-width:19px;height:19px;padding:0 5px;border-radius:10px;background:var(--primary);color:#fff;font-size:11px;font-weight:700;display:grid;place-items:center}
+.badge:empty,.badge[data-n="0"]{display:none}
+select.lang{height:42px;padding:0 10px;border-radius:12px;border:1px solid var(--border);background:var(--card);color:var(--text);font-weight:600;cursor:pointer;outline:none}
+.burger{display:none}
+
+/* ============ COMMON ============ */
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 22px;border-radius:14px;font-weight:600;font-size:14px;transition:.25s}
+.btn.primary{background:linear-gradient(135deg,var(--primary),var(--primary2));color:#fff}
+.btn.ghost{border:1px solid var(--border);background:var(--card)}
+.btn:hover{transform:translateY(-2px)}
+.cov{position:relative;width:100%;height:100%;padding:14px 12px;color:#fff;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden;border-radius:inherit;text-align:left}
+.cov::before{content:"";position:absolute;inset:0;background:linear-gradient(120deg,rgba(255,255,255,.22),transparent 40%,rgba(0,0,0,.25));pointer-events:none}
+.cov::after{content:"";position:absolute;left:8px;top:0;bottom:0;width:2px;background:rgba(0,0,0,.2)}
+.cov .ct{font-family:'Playfair Display',serif;font-weight:700;line-height:1.15;text-shadow:0 2px 6px rgba(0,0,0,.4);font-size:1em;position:relative}
+.cov .ca{font-size:.62em;letter-spacing:1.5px;text-transform:uppercase;opacity:.9;position:relative}
+.cov .cg{font-size:2.2em;opacity:.9;position:relative}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:26px}
+.card{position:relative;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;transition:transform .35s,box-shadow .35s;transform-style:preserve-3d;display:flex;flex-direction:column;animation:pop .5s both}
+@keyframes pop{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+.card:hover{box-shadow:var(--shadow)}
+.card .bookwrap{perspective:900px;height:250px;display:grid;place-items:center;margin-bottom:14px}
+.card .bk3{width:150px;height:222px;transform-style:preserve-3d;transform:rotateY(-18deg);transition:transform .6s cubic-bezier(.2,.8,.2,1);position:relative}
+.card:hover .bk3{transform:rotateY(-2deg) scale(1.06)}
+.bk3 .front{position:absolute;inset:0;border-radius:3px 8px 8px 3px;box-shadow:6px 8px 18px rgba(0,0,0,.35);font-size:15px}
+.bk3 .side{position:absolute;left:0;top:2px;width:14px;height:calc(100% - 4px);background:#efe2c2;transform-origin:left;transform:rotateY(90deg) translateX(-14px)}
+.card h3{font-size:17px;line-height:1.3;margin-bottom:4px;font-family:'Inter',sans-serif;font-weight:600}
+.card .au{color:var(--muted);font-size:13px;margin-bottom:8px}
+.stars{color:#f5a623;font-size:13px;letter-spacing:1px}
+.stars small{color:var(--muted);letter-spacing:0;margin-left:4px}
+.card .row{display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:12px}
+.price{font-weight:700;font-size:17px}
+.add{padding:9px 14px;border-radius:12px;background:var(--primary);color:#fff;font-size:13px;font-weight:600;transition:.2s}
+.add:hover{filter:brightness(1.1);transform:scale(1.05)}
+.fav{position:absolute;top:14px;right:14px;z-index:3;width:36px;height:36px;border-radius:50%;background:var(--bg);border:1px solid var(--border);display:grid;place-items:center;transition:.25s}
+.fav svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2}
+.fav:hover{transform:scale(1.15)}
+.fav.on{color:#e0394f;background:#ffe9ec;border-color:#f6b6c0}
+.fav.on svg{fill:currentColor}
+.sale{position:absolute;top:14px;left:14px;z-index:3;background:var(--accent);color:#fff;font-size:12px;font-weight:700;padding:4px 10px;border-radius:20px}
+.empty{grid-column:1/-1;text-align:center;color:var(--muted);padding:60px 20px;font-size:18px}
+footer{background:var(--bg2);border-top:1px solid var(--border);padding:34px 0;margin-top:50px;text-align:center;color:var(--muted);font-size:13px}
+#toast{position:fixed;left:50%;bottom:30px;transform:translate(-50%,100px);background:var(--text);color:var(--bg);padding:13px 22px;border-radius:30px;font-weight:600;font-size:14px;z-index:2000;transition:.4s;opacity:0}
+#toast.show{transform:translate(-50%,0);opacity:1}
+
+/* ============ CATALOG ============ */
+.page-head{padding:40px 0 10px}
+.crumbs{color:var(--muted);font-size:13px;margin-bottom:10px}
+.crumbs a:hover{color:var(--primary)}
+.page-head h1{font-size:clamp(30px,4vw,46px)}
+.layout{display:grid;grid-template-columns:270px 1fr;gap:30px;margin-top:26px;align-items:start}
+.filters{position:sticky;top:90px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:22px}
+.filters h3{font-family:'Inter',sans-serif;font-size:13px;text-transform:uppercase;letter-spacing:1.2px;color:var(--muted);margin:0 0 12px}
+.fblock{padding-bottom:20px;margin-bottom:20px;border-bottom:1px dashed var(--border)}
+.fblock:last-of-type{border:none;margin:0;padding:0}
+.opt{display:flex;align-items:center;gap:10px;padding:7px 0;cursor:pointer;font-size:14px;user-select:none}
+.opt input{accent-color:var(--primary);width:17px;height:17px}
+.opt em{margin-left:auto;font-style:normal;color:var(--muted);font-size:12px}
+.pr{display:flex;gap:8px;align-items:center}
+.pr input,.filters select,.sortsel{width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--border);background:var(--bg);color:var(--text);outline:none;font-size:14px;font-family:inherit}
+.pr input:focus,.filters select:focus,.sortsel:focus{border-color:var(--primary)}
+.rng{width:100%;accent-color:var(--primary);margin-top:12px}
+.toolbar{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:22px;flex-wrap:wrap}
+.toolbar .count{color:var(--muted);font-size:14px}
+.toolbar .count b{color:var(--text)}
+.sortsel{width:auto;min-width:200px;background:var(--card)}
+.tags{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+.tag{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border-radius:20px;background:var(--bg2);border:1px solid var(--border);font-size:13px}
+.tag button{font-size:15px;line-height:1;color:var(--muted)}
+.tag button:hover{color:#e0394f}
+.fbtn{display:none}
+
+@media(max-width:900px){
+  .links{display:none;position:absolute;top:70px;left:0;right:0;background:var(--bg);flex-direction:column;padding:12px 20px;border-bottom:1px solid var(--border)}
+  .links.show{display:flex}.burger{display:grid}
+  .layout{grid-template-columns:1fr}
+  .filters{display:none;position:static}.filters.show{display:block}
+  .fbtn{display:inline-flex}
+  .search{max-width:none}
+}
+@media(max-width:600px){
+  .nav{gap:8px}.logo b{display:none}
+  .grid{grid-template-columns:repeat(2,1fr);gap:14px}
+  .card{padding:12px}.card .bookwrap{height:200px}.bk3{transform:scale(.85) rotateY(-18deg)!important}
+  .sortsel{min-width:0;flex:1}
+}
+</style>
+</head>
+<body>
+
+<!-- ============ HEADER ============ -->
+<header>
+  <div class="container nav">
+    <a href="index.html" class="logo"><span>📖</span><b>Kitobxona</b></a>
+    <nav class="links" id="links">
+      <a href="index.html" data-i18n="navHome">Bosh sahifa</a>
+      <a href="catalog.html" class="active" data-i18n="navCatalog">Katalog</a>
+      <a href="favorites.html" data-i18n="navFav">Sevimlilar</a>
+      <a href="cart.html" data-i18n="navCart">Savat</a>
+    </nav>
+    <div class="search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input id="q" type="search" autocomplete="off" data-i18n-ph="search" placeholder="Kitob yoki muallif qidirish...">
+    </div>
+    <div class="tools">
+      <select class="lang" id="lang"><option value="uz">UZ</option><option value="ru">RU</option><option value="en">EN</option></select>
+      <button class="ibtn" id="theme" aria-label="theme"><span id="themeIco">🌙</span></button>
+      <a class="ibtn" href="favorites.html" aria-label="favorites"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-4.6-9.3-9.1C1 8.5 3 5 6.4 5c2 0 3.6 1.1 4.6 2.6h2C14 6.1 15.6 5 17.6 5 21 5 23 8.5 21.3 11.9 19 16.4 12 21 12 21z"/></svg><span class="badge" id="favCount" data-n="0"></span></a>
+      <a class="ibtn" href="cart.html" aria-label="cart"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M2 3h3l2.6 12.4a2 2 0 0 0 2 1.6h7.8a2 2 0 0 0 2-1.5L21 8H6"/></svg><span class="badge" id="cartCount" data-n="0"></span></a>
+      <button class="ibtn burger" id="burger" aria-label="menu">☰</button>
+    </div>
+  </div>
+</header>
+
+<main class="container">
+  <div class="page-head">
+    <div class="crumbs"><a href="index.html" data-i18n="navHome">Bosh sahifa</a> / <span data-i18n="navCatalog">Katalog</span></div>
+    <h1 data-i18n="catTitle">Kitoblar katalogi</h1>
+  </div>
+
+  <div class="layout">
+    <aside class="filters" id="filters">
+      <div class="fblock">
+        <h3 data-i18n="fGenre">Janr</h3>
+        <div id="genreList"></div>
+      </div>
+      <div class="fblock">
+        <h3 data-i18n="fPrice">Narx (so'm)</h3>
+        <div class="pr"><input type="number" id="pmin" min="0" step="1000" placeholder="0"><span>—</span><input type="number" id="pmax" min="0" step="1000" placeholder="150000"></div>
+        <input type="range" class="rng" id="prng" min="0" max="150000" step="1000" value="150000">
+      </div>
+      <div class="fblock">
+        <h3 data-i18n="fRating">Reyting</h3>
+        <select id="rmin">
+          <option value="0" data-i18n="rAny">Barchasi</option>
+          <option value="4.5">★ 4.5+</option>
+          <option value="4.7">★ 4.7+</option>
+          <option value="4.9">★ 4.9+</option>
+        </select>
+      </div>
+      <div class="fblock">
+        <label class="opt"><input type="checkbox" id="onlySale"> <span data-i18n="fSale">Faqat chegirmadagilar</span></label>
+        <label class="opt"><input type="checkbox" id="onlyFav"> <span data-i18n="fOnlyFav">Faqat sevimlilar</span></label>
+      </div>
+      <button class="btn ghost" id="reset" style="width:100%;justify-content:center;margin-top:18px" data-i18n="fReset">Filtrlarni tozalash</button>
+    </aside>
+
+    <section>
+      <div class="toolbar">
+        <button class="btn ghost fbtn" id="fToggle">⚙ <span data-i18n="filters">Filtrlar</span></button>
+        <div class="count" id="count"></div>
+        <select class="sortsel" id="sort">
+          <option value="pop" data-i18n="sPop">Ommabop</option>
+          <option value="new" data-i18n="sNew">Yangi</option>
+          <option value="asc" data-i18n="sAsc">Arzonroq</option>
+          <option value="desc" data-i18n="sDesc">Qimmatroq</option>
+          <option value="rate" data-i18n="sRate">Reyting bo'yicha</option>
+          <option value="az" data-i18n="sAz">Nomi A–Z</option>
+        </select>
+      </div>
+      <div class="tags" id="tags"></div>
+      <div class="grid" id="grid"></div>
+    </section>
+  </div>
+</main>
+
+<footer>© 2026 Kitobxona. <span data-i18n="rights">Barcha huquqlar himoyalangan.</span></footer>
+<div id="toast"></div>
+
+<script>
+/* =====================================================
+   SHARED CORE  (har bir HTML faylda bir xil)
+   ===================================================== */
+const BOOKS = [
+  {id:1, t:{uz:"O'tkan kunlar",ru:"Минувшие дни",en:"Bygone Days"}, a:"Abdulla Qodiriy", g:"fiction", p:68000, old:80000, r:4.9, n:1280, c:["#7a2e12","#d9822b"], ic:"❦", y:1925, pg:420},
+  {id:2, t:{uz:"Mehrobdan chayon",ru:"Скорпион из алтаря",en:"Scorpion from the Altar"}, a:"Abdulla Qodiriy", g:"fiction", p:59000, r:4.8, n:910, c:["#1f4e5f","#4fa3a5"], ic:"✦", y:1929, pg:360},
+  {id:3, t:{uz:"Atomic Habits",ru:"Атомные привычки",en:"Atomic Habits"}, a:"James Clear", g:"selfdev", p:95000, old:115000, r:4.9, n:2310, c:["#c0392b","#f39c12"], ic:"⚛", y:2018, pg:320},
+  {id:4, t:{uz:"Boy ota, kambag'al ota",ru:"Богатый папа, бедный папа",en:"Rich Dad Poor Dad"}, a:"Robert Kiyosaki", g:"business", p:79000, r:4.7, n:1840, c:["#14532d","#65a30d"], ic:"$", y:1997, pg:336},
+  {id:5, t:{uz:"Kichkina shahzoda",ru:"Маленький принц",en:"The Little Prince"}, a:"Antoine de Saint-Exupéry", g:"kids", p:52000, r:4.9, n:3020, c:["#1e3a8a","#60a5fa"], ic:"☆", y:1943, pg:96},
+  {id:6, t:{uz:"Ikki eshik orasi",ru:"Между двух дверей",en:"Between Two Doors"}, a:"O'tkir Hoshimov", g:"fiction", p:64000, r:4.8, n:760, c:["#4a1d6b","#a855f7"], ic:"❖", y:1986, pg:380},
+  {id:7, t:{uz:"Zero to One",ru:"От нуля к единице",en:"Zero to One"}, a:"Peter Thiel", g:"business", p:88000, old:99000, r:4.6, n:1120, c:["#111827","#6b7280"], ic:"0→1", y:2014, pg:224},
+  {id:8, t:{uz:"1984",ru:"1984",en:"1984"}, a:"George Orwell", g:"fiction", p:72000, r:4.8, n:2640, c:["#7f1d1d","#111"], ic:"👁", y:1949, pg:328},
+  {id:9, t:{uz:"Sapiens",ru:"Sapiens",en:"Sapiens"}, a:"Yuval Noah Harari", g:"science", p:105000, r:4.8, n:1980, c:["#b45309","#fbbf24"], ic:"☼", y:2011, pg:512},
+  {id:10, t:{uz:"Python asoslari",ru:"Основы Python",en:"Python Fundamentals"}, a:"Eric Matthes", g:"tech", p:125000, old:150000, r:4.7, n:640, c:["#0f3d5e","#3b82f6"], ic:"</>", y:2023, pg:544},
+  {id:11, t:{uz:"Alisa mo'jizalar mamlakatida",ru:"Алиса в стране чудес",en:"Alice in Wonderland"}, a:"Lewis Carroll", g:"kids", p:48000, r:4.7, n:870, c:["#be185d","#f9a8d4"], ic:"♠", y:1865, pg:200},
+  {id:12, t:{uz:"Deep Work",ru:"Глубокая работа",en:"Deep Work"}, a:"Cal Newport", g:"selfdev", p:82000, r:4.6, n:930, c:["#134e4a","#2dd4bf"], ic:"◎", y:2016, pg:304}
+];
+const GENRES = {
+  fiction:{ic:"📖",uz:"Badiiy",ru:"Художественная",en:"Fiction"},
+  business:{ic:"💼",uz:"Biznes",ru:"Бизнес",en:"Business"},
+  selfdev:{ic:"🌱",uz:"Rivojlanish",ru:"Саморазвитие",en:"Self-growth"},
+  kids:{ic:"🧸",uz:"Bolalar",ru:"Детские",en:"Kids"},
+  science:{ic:"🔬",uz:"Ilmiy",ru:"Научная",en:"Science"},
+  tech:{ic:"💻",uz:"Texnologiya",ru:"Технологии",en:"Tech"}
+};
+const I18N = {
+ uz:{navHome:"Bosh sahifa",navCatalog:"Katalog",navFav:"Sevimlilar",navCart:"Savat",search:"Kitob yoki muallif qidirish...",
+  rights:"Barcha huquqlar himoyalangan.",add:"Savatga",added:"Savatga qo'shildi ✓",favAdd:"Sevimlilarga qo'shildi ♥",favDel:"Sevimlilardan olib tashlandi",som:"so'm",nores:"Hech narsa topilmadi",
+  catTitle:"Kitoblar katalogi",fGenre:"Janr",fPrice:"Narx (so'm)",fRating:"Reyting",rAny:"Barchasi",fSale:"Faqat chegirmadagilar",fOnlyFav:"Faqat sevimlilar",fReset:"Filtrlarni tozalash",filters:"Filtrlar",
+  sPop:"Ommabop",sNew:"Yangi",sAsc:"Arzonroq",sDesc:"Qimmatroq",sRate:"Reyting bo'yicha",sAz:"Nomi A–Z",found:"Topildi:",unit:"ta kitob",tagSale:"Chegirma",tagFav:"Sevimlilar",tagQ:"Qidiruv"},
+ ru:{navHome:"Главная",navCatalog:"Каталог",navFav:"Избранное",navCart:"Корзина",search:"Поиск книги или автора...",
+  rights:"Все права защищены.",add:"В корзину",added:"Добавлено в корзину ✓",favAdd:"Добавлено в избранное ♥",favDel:"Удалено из избранного",som:"сум",nores:"Ничего не найдено",
+  catTitle:"Каталог книг",fGenre:"Жанр",fPrice:"Цена (сум)",fRating:"Рейтинг",rAny:"Все",fSale:"Только со скидкой",fOnlyFav:"Только избранное",fReset:"Сбросить фильтры",filters:"Фильтры",
+  sPop:"Популярные",sNew:"Новые",sAsc:"Дешевле",sDesc:"Дороже",sRate:"По рейтингу",sAz:"По названию А–Я",found:"Найдено:",unit:"книг",tagSale:"Скидка",tagFav:"Избранное",tagQ:"Поиск"},
+ en:{navHome:"Home",navCatalog:"Catalog",navFav:"Favorites",navCart:"Cart",search:"Search a book or author...",
+  rights:"All rights reserved.",add:"Add to cart",added:"Added to cart ✓",favAdd:"Added to favorites ♥",favDel:"Removed from favorites",som:"UZS",nores:"Nothing found",
+  catTitle:"Book catalog",fGenre:"Genre",fPrice:"Price (UZS)",fRating:"Rating",rAny:"All",fSale:"On sale only",fOnlyFav:"Favorites only",fReset:"Reset filters",filters:"Filters",
+  sPop:"Popular",sNew:"Newest",sAsc:"Price: low to high",sDesc:"Price: high to low",sRate:"Top rated",sAz:"Title A–Z",found:"Found:",unit:"books",tagSale:"On sale",tagFav:"Favorites",tagQ:"Search"}
+};
+
+const LS = {
+  get(k,d){try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}},
+  set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+};
+let lang  = LS.get('kx_lang','uz');
+let theme = LS.get('kx_theme', matchMedia('(prefers-color-scheme: dark)').matches ? 'dark':'light');
+let cart  = LS.get('kx_cart',{});
+let favs  = LS.get('kx_favs',[]);
+
+const $  = (s,r=document)=>r.querySelector(s);
+const $$ = (s,r=document)=>[...r.querySelectorAll(s)];
+const tr = k => (I18N[lang]&&I18N[lang][k]) || I18N.uz[k] || k;
+const money = n => n.toLocaleString('ru-RU').replace(/\u00a0/g,' ') + ' ' + tr('som');
+const bt = b => b.t[lang];
+
+function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove('show'),1800)}
+function applyLang(){
+  document.documentElement.lang = lang;
+  $$('[data-i18n]').forEach(el=>el.textContent = tr(el.dataset.i18n));
+  $$('[data-i18n-ph]').forEach(el=>el.placeholder = tr(el.dataset.i18nPh));
+  $('#lang').value = lang;
+}
+function applyTheme(){
+  document.documentElement.dataset.theme = theme;
+  $('#themeIco').textContent = theme==='dark' ? '☀️' : '🌙';
+}
+function updateCounts(){
+  const c = Object.values(cart).reduce((s,x)=>s+x,0);
+  $('#cartCount').textContent = c||''; $('#cartCount').dataset.n = c;
+  $('#favCount').textContent = favs.length||''; $('#favCount').dataset.n = favs.length;
+}
+function addToCart(id){cart[id]=(cart[id]||0)+1;LS.set('kx_cart',cart);updateCounts();toast(tr('added'))}
+function toggleFav(id){
+  const i=favs.indexOf(id);
+  if(i>-1){favs.splice(i,1);toast(tr('favDel'))}else{favs.push(id);toast(tr('favAdd'))}
+  LS.set('kx_favs',favs);updateCounts();
+  $$(`.fav[data-id="${id}"]`).forEach(b=>b.classList.toggle('on',favs.includes(id)));
+  if(typeof onFavChange==='function')onFavChange();
+}
+addEventListener('storage',e=>{
+  if(e.key==='kx_cart')cart=LS.get('kx_cart',{});
+  if(e.key==='kx_favs'){favs=LS.get('kx_favs',[]);$$('.fav').forEach(b=>b.classList.toggle('on',favs.includes(+b.dataset.id)))}
+  updateCounts();
+});
+function coverHTML(b,size){
+  return `<div class="cov" style="background:linear-gradient(145deg,${b.c[0]},${b.c[1]});${size?`font-size:${size}px`:''}">
+    <div class="cg">${b.ic}</div><div><div class="ct">${bt(b)}</div><div class="ca" style="margin-top:6px">${b.a}</div></div></div>`;
+}
+function stars(r){const f=Math.round(r);return '★'.repeat(f)+'☆'.repeat(5-f)}
+function cardHTML(b,i=0){
+  const sale = b.old ? `<span class="sale">-${Math.round((1-b.p/b.old)*100)}%</span>` : '';
+  return `<article class="card" data-id="${b.id}" style="animation-delay:${Math.min(i,12)*40}ms">
+    ${sale}
+    <button class="fav ${favs.includes(b.id)?'on':''}" data-id="${b.id}" aria-label="favorite"><svg viewBox="0 0 24 24"><path d="M12 21s-7-4.6-9.3-9.1C1 8.5 3 5 6.4 5c2 0 3.6 1.1 4.6 2.6h2C14 6.1 15.6 5 17.6 5 21 5 23 8.5 21.3 11.9 19 16.4 12 21 12 21z"/></svg></button>
+    <a href="product.html?id=${b.id}" class="bookwrap"><div class="bk3"><div class="front">${coverHTML(b,15)}</div><div class="side"></div></div></a>
+    <h3><a href="product.html?id=${b.id}">${bt(b)}</a></h3>
+    <div class="au">${b.a}</div>
+    <div class="stars">${stars(b.r)}<small>${b.r} (${b.n})</small></div>
+    <div class="row"><div class="price">${money(b.p)}</div><button class="add" data-add="${b.id}">${tr('add')}</button></div>
+  </article>`;
+}
+function renderGrid(el,list){
+  el.innerHTML = list.length ? list.map(cardHTML).join('') : `<div class="empty">📭 ${tr('nores')}</div>`;
+  $$('.card',el).forEach(card=>{
+    card.addEventListener('mousemove',e=>{
+      const r=card.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;
+      card.style.transform=`perspective(900px) rotateX(${-y*6}deg) rotateY(${x*6}deg) translateY(-4px)`;
+    });
+    card.addEventListener('mouseleave',()=>card.style.transform='');
+  });
+}
+document.addEventListener('click',e=>{
+  const a=e.target.closest('[data-add]'); if(a){addToCart(+a.dataset.add);return}
+  const f=e.target.closest('.fav'); if(f){e.preventDefault();toggleFav(+f.dataset.id)}
+});
+$('#lang').addEventListener('change',e=>{lang=e.target.value;LS.set('kx_lang',lang);applyLang();renderAll()});
+$('#theme').addEventListener('click',()=>{theme=theme==='dark'?'light':'dark';LS.set('kx_theme',theme);applyTheme()});
+$('#burger').addEventListener('click',()=>$('#links').classList.toggle('show'));
+
+/* =====================================================
+   SAHIFAGA XOS KOD  (catalog.html)
+   ===================================================== */
+const MAXP = 150000;
+const params = new URLSearchParams(location.search);
+const state = {
+  q: (params.get('q')||'').trim(),
+  genres: new Set(params.get('genre') ? params.get('genre').split(',').filter(g=>GENRES[g]) : []),
+  min: 0, max: MAXP, rmin: 0, sale:false, onlyFav:false, sort:'pop'
+};
+
+function filtered(){
+  const q = state.q.toLowerCase();
+  let list = BOOKS.filter(b=>{
+    if(q && !(Object.values(b.t).some(t=>t.toLowerCase().includes(q)) || b.a.toLowerCase().includes(q) || GENRES[b.g][lang].toLowerCase().includes(q))) return false;
+    if(state.genres.size && !state.genres.has(b.g)) return false;
+    if(b.p<state.min || b.p>state.max) return false;
+    if(b.r<state.rmin) return false;
+    if(state.sale && !b.old) return false;
+    if(state.onlyFav && !favs.includes(b.id)) return false;
+    return true;
+  });
+  const s = {
+    pop:(a,b)=>b.n-a.n, new:(a,b)=>b.y-a.y, asc:(a,b)=>a.p-b.p, desc:(a,b)=>b.p-a.p,
+    rate:(a,b)=>b.r-a.r||b.n-a.n, az:(a,b)=>bt(a).localeCompare(bt(b),lang)
+  }[state.sort];
+  return list.sort(s);
+}
+
+function renderGenres(){
+  $('#genreList').innerHTML = Object.entries(GENRES).map(([k,g])=>{
+    const n = BOOKS.filter(b=>b.g===k).length;
+    return `<label class="opt"><input type="checkbox" value="${k}" ${state.genres.has(k)?'checked':''}> <span>${g.ic} ${g[lang]}</span><em>${n}</em></label>`;
+  }).join('');
+  $$('#genreList input').forEach(i=>i.addEventListener('change',()=>{
+    i.checked ? state.genres.add(i.value) : state.genres.delete(i.value);
+    renderAll();
+  }));
+}
+function renderTags(){
+  const t=[];
+  if(state.q) t.push(`${tr('tagQ')}: “${state.q}”|q`);
+  state.genres.forEach(g=>t.push(`${GENRES[g][lang]}|g:${g}`));
+  if(state.min>0||state.max<MAXP) t.push(`${state.min.toLocaleString('ru-RU')} – ${state.max.toLocaleString('ru-RU')}|p`);
+  if(state.rmin>0) t.push(`★ ${state.rmin}+|r`);
+  if(state.sale) t.push(`${tr('tagSale')}|s`);
+  if(state.onlyFav) t.push(`${tr('tagFav')}|f`);
+  $('#tags').innerHTML = t.map(x=>{const [l,k]=x.split('|');return `<span class="tag">${l}<button data-k="${k}" aria-label="remove">×</button></span>`}).join('');
+  $$('#tags button').forEach(b=>b.addEventListener('click',()=>{
+    const k=b.dataset.k;
+    if(k==='q'){state.q='';$('#q').value=''}
+    else if(k.startsWith('g:'))state.genres.delete(k.slice(2));
+    else if(k==='p'){state.min=0;state.max=MAXP;syncPrice()}
+    else if(k==='r'){state.rmin=0;$('#rmin').value='0'}
+    else if(k==='s'){state.sale=false;$('#onlySale').checked=false}
+    else if(k==='f'){state.onlyFav=false;$('#onlyFav').checked=false}
+    renderAll();
+  }));
+}
+function syncPrice(){
+  $('#pmin').value = state.min||''; $('#pmax').value = state.max<MAXP ? state.max : '';
+  $('#prng').value = state.max;
+}
+function renderList(){
+  const list = filtered();
+  $('#count').innerHTML = `${tr('found')} <b>${list.length}</b> ${tr('unit')}`;
+  renderGrid($('#grid'),list.map(b=>b)); 
+  // staggered animation uchun qayta chizish
+  $('#grid').innerHTML = list.length ? list.map(cardHTML).join('') : `<div class="empty">📭 ${tr('nores')}</div>`;
+  $$('#grid .card').forEach(card=>{
+    card.addEventListener('mousemove',e=>{
+      const r=card.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;
+      card.style.transform=`perspective(900px) rotateX(${-y*6}deg) rotateY(${x*6}deg) translateY(-4px)`;
+    });
+    card.addEventListener('mouseleave',()=>card.style.transform='');
+  });
+}
+function renderAll(){renderGenres();renderTags();renderList()}
+function onFavChange(){if(state.onlyFav)renderList()}
+
+/* ---------- Filtr hodisalari ---------- */
+$('#q').value = state.q;
+$('#q').addEventListener('input',e=>{state.q=e.target.value.trim();renderTags();renderList()});
+$('#pmin').addEventListener('input',e=>{state.min=Math.max(0,+e.target.value||0);renderTags();renderList()});
+$('#pmax').addEventListener('input',e=>{state.max=+e.target.value||MAXP;$('#prng').value=state.max;renderTags();renderList()});
+$('#prng').addEventListener('input',e=>{state.max=+e.target.value;$('#pmax').value=state.max<MAXP?state.max:'';renderTags();renderList()});
+$('#rmin').addEventListener('change',e=>{state.rmin=+e.target.value;renderTags();renderList()});
+$('#onlySale').addEventListener('change',e=>{state.sale=e.target.checked;renderTags();renderList()});
+$('#onlyFav').addEventListener('change',e=>{state.onlyFav=e.target.checked;renderTags();renderList()});
+$('#sort').addEventListener('change',e=>{state.sort=e.target.value;renderList()});
+$('#reset').addEventListener('click',()=>{
+  Object.assign(state,{q:'',min:0,max:MAXP,rmin:0,sale:false,onlyFav:false,sort:'pop'});state.genres.clear();
+  $('#q').value='';$('#rmin').value='0';$('#onlySale').checked=false;$('#onlyFav').checked=false;$('#sort').value='pop';syncPrice();renderAll();
+});
+$('#fToggle').addEventListener('click',()=>$('#filters').classList.toggle('show'));
+
+/* ---------- Start ---------- */
+applyTheme();applyLang();updateCounts();syncPrice();renderAll();
+</script>
+</body>
+</html>

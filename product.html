@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="uz" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kitob — Kitobxona</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#faf6ef; --bg2:#f1eadd; --card:#ffffff; --text:#2a211b; --muted:#7a6b5d;
+  --primary:#b4532a; --primary2:#e08a3c; --accent:#1f6f6b; --border:#e6dccb;
+  --shadow:0 10px 30px rgba(80,50,20,.12); --radius:18px;
+}
+[data-theme="dark"]{
+  --bg:#14110f; --bg2:#1c1814; --card:#211c17; --text:#f3ebe0; --muted:#a8998a;
+  --primary:#e08a3c; --primary2:#f2b266; --accent:#4fc1b9; --border:#352d25;
+  --shadow:0 10px 30px rgba(0,0,0,.5);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);transition:background .4s,color .4s;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+h1,h2,h3{font-family:'Playfair Display',serif}
+.container{max-width:1200px;margin:0 auto;padding:0 20px}
+
+/* ============ HEADER ============ */
+header{position:sticky;top:0;z-index:100;background:color-mix(in srgb,var(--bg) 85%,transparent);backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}
+.nav{display:flex;align-items:center;gap:18px;height:70px}
+.logo{display:flex;align-items:center;gap:10px;font-family:'Playfair Display',serif;font-weight:800;font-size:24px}
+.logo span{display:grid;place-items:center;width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,var(--primary),var(--primary2));color:#fff;font-size:20px}
+.links{display:flex;gap:6px;margin-left:12px}
+.links a{padding:8px 14px;border-radius:10px;font-weight:500;font-size:15px;color:var(--muted);transition:.2s}
+.links a:hover,.links a.active{background:var(--bg2);color:var(--text)}
+.search{position:relative;flex:1;max-width:380px;margin-left:auto}
+.search input{width:100%;padding:11px 16px 11px 42px;border-radius:30px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:14px;outline:none;transition:.2s}
+.search input:focus{border-color:var(--primary);box-shadow:0 0 0 4px color-mix(in srgb,var(--primary) 18%,transparent)}
+.search svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:18px;height:18px;color:var(--muted)}
+#sug{position:absolute;top:calc(100% + 8px);left:0;right:0;background:var(--card);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow);overflow:hidden;display:none;z-index:50}
+#sug a{display:flex;gap:12px;align-items:center;padding:10px 14px;font-size:14px}
+#sug a:hover{background:var(--bg2)}
+#sug .mini{width:30px;height:42px;border-radius:3px;flex-shrink:0}
+#sug small{color:var(--muted);display:block}
+.tools{display:flex;align-items:center;gap:8px}
+.ibtn{position:relative;width:42px;height:42px;border-radius:12px;display:grid;place-items:center;background:var(--card);border:1px solid var(--border);transition:.2s}
+.ibtn:hover{transform:translateY(-2px);border-color:var(--primary)}
+.ibtn svg{width:20px;height:20px}
+.badge{position:absolute;top:-6px;right:-6px;min-width:19px;height:19px;padding:0 5px;border-radius:10px;background:var(--primary);color:#fff;font-size:11px;font-weight:700;display:grid;place-items:center}
+.badge:empty,.badge[data-n="0"]{display:none}
+select.lang{height:42px;padding:0 10px;border-radius:12px;border:1px solid var(--border);background:var(--card);color:var(--text);font-weight:600;cursor:pointer;outline:none}
+.burger{display:none}
+
+/* ============ COMMON ============ */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:14px 26px;border-radius:14px;font-weight:600;font-size:15px;transition:.25s}
+.btn.primary{background:linear-gradient(135deg,var(--primary),var(--primary2));color:#fff;box-shadow:0 10px 24px color-mix(in srgb,var(--primary) 35%,transparent)}
+.btn.ghost{border:1px solid var(--border);background:var(--card)}
+.btn:hover{transform:translateY(-2px)}
+.cov{position:relative;width:100%;height:100%;padding:14px 12px;color:#fff;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden;border-radius:inherit;text-align:left}
+.cov::before{content:"";position:absolute;inset:0;background:linear-gradient(120deg,rgba(255,255,255,.22),transparent 40%,rgba(0,0,0,.25));pointer-events:none}
+.cov::after{content:"";position:absolute;left:8px;top:0;bottom:0;width:2px;background:rgba(0,0,0,.2)}
+.cov .ct{font-family:'Playfair Display',serif;font-weight:700;line-height:1.15;text-shadow:0 2px 6px rgba(0,0,0,.4);font-size:1em;position:relative}
+.cov .ca{font-size:.62em;letter-spacing:1.5px;text-transform:uppercase;opacity:.9;position:relative}
+.cov .cg{font-size:2.2em;opacity:.9;position:relative}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:26px}
+.card{position:relative;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;transition:transform .35s,box-shadow .35s;transform-style:preserve-3d;display:flex;flex-direction:column}
+.card:hover{box-shadow:var(--shadow)}
+.card .bookwrap{perspective:900px;height:250px;display:grid;place-items:center;margin-bottom:14px}
+.card .bk3{width:150px;height:222px;transform-style:preserve-3d;transform:rotateY(-18deg);transition:transform .6s cubic-bezier(.2,.8,.2,1);position:relative}
+.card:hover .bk3{transform:rotateY(-2deg) scale(1.06)}
+.bk3 .front{position:absolute;inset:0;border-radius:3px 8px 8px 3px;box-shadow:6px 8px 18px rgba(0,0,0,.35);font-size:15px}
+.bk3 .side{position:absolute;left:0;top:2px;width:14px;height:calc(100% - 4px);background:#efe2c2;transform-origin:left;transform:rotateY(90deg) translateX(-14px)}
+.card h3{font-size:17px;line-height:1.3;margin-bottom:4px;font-family:'Inter',sans-serif;font-weight:600}
+.card .au{color:var(--muted);font-size:13px;margin-bottom:8px}
+.stars{color:#f5a623;font-size:13px;letter-spacing:1px}
+.stars small{color:var(--muted);letter-spacing:0;margin-left:4px}
+.card .row{display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:12px}
+.price{font-weight:700;font-size:17px}
+.add{padding:9px 14px;border-radius:12px;background:var(--primary);color:#fff;font-size:13px;font-weight:600;transition:.2s}
+.add:hover{filter:brightness(1.1);transform:scale(1.05)}
+.fav{position:absolute;top:14px;right:14px;z-index:3;width:36px;height:36px;border-radius:50%;background:var(--bg);border:1px solid var(--border);display:grid;place-items:center;transition:.25s}
+.fav svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2}
+.fav:hover{transform:scale(1.15)}
+.fav.on{color:#e0394f;background:#ffe9ec;border-color:#f6b6c0}
+.fav.on svg{fill:currentColor}
+.sale{position:absolute;top:14px;left:14px;z-index:3;background:var(--accent);color:#fff;font-size:12px;font-weight:700;padding:4px 10px;border-radius:20px}
+.empty{grid-column:1/-1;text-align:center;color:var(--muted);padding:60px 20px;font-size:18px}
+footer{background:var(--bg2);border-top:1px solid var(--border);padding:34px 0;margin-top:70px;text-align:center;color:var(--muted);font-size:13px}
+#toast{position:fixed;left:50%;bottom:30px;transform:translate(-50%,100px);background:var(--text);color:var(--bg);padding:13px 22px;border-radius:30px;font-weight:600;font-size:14px;z-index:2000;transition:.4s;opacity:0}
+#toast.show{transform:translate(-50%,0);opacity:1}
+
+/* ============ PRODUCT ============ */
+.crumbs{color:var(--muted);font-size:13px;margin:30px 0 20px}
+.crumbs a:hover{color:var(--primary)}
+.pgrid{display:grid;grid-template-columns:1fr 1fr;gap:50px;align-items:start}
+.viewer{position:sticky;top:90px;border-radius:28px;background:radial-gradient(circle at 50% 35%,var(--bg2),var(--card));border:1px solid var(--border);padding:30px 20px 24px;overflow:hidden}
+.scene{height:440px;display:grid;place-items:center;perspective:1500px;cursor:grab;touch-action:pan-y}
+.scene:active{cursor:grabbing}
+.rot{width:260px;height:360px;position:relative;transform-style:preserve-3d;transition:transform .15s ease-out}
+.rot.smooth{transition:transform .9s cubic-bezier(.2,.8,.2,1)}
+.rot>*{position:absolute}
+.pcover{inset:0;transform-origin:left center;transform-style:preserve-3d;transition:transform 1.3s cubic-bezier(.6,.05,.2,1);transform:translateZ(20px);z-index:5}
+.rot.open .pcover{transform:translateZ(20px) rotateY(-165deg)}
+.pcover .f{position:absolute;inset:0;backface-visibility:hidden;border-radius:4px 12px 12px 4px}
+.pcover .out{font-size:24px;box-shadow:inset 6px 0 14px rgba(0,0,0,.3),0 0 0 1px rgba(0,0,0,.2)}
+.pcover .in{transform:rotateY(180deg);background:#f4e8cf}
+.ppg{inset:0;background:#fbf3e1;border-radius:2px 8px 8px 2px;box-shadow:inset 4px 0 10px rgba(0,0,0,.08)}
+.ppg.a{transform:translateZ(14px)}.ppg.b{transform:translateZ(8px)}.ppg.c{transform:translateZ(2px)}
+.ppg.last{transform:translateZ(-4px);padding:26px 22px;color:#3b2a1c;display:flex;flex-direction:column;justify-content:center;text-align:center}
+.ppg.last h4{font-family:'Playfair Display',serif;font-size:20px;margin-bottom:10px}
+.ppg.last p{font-size:12px;line-height:1.7;color:#6b5844}
+.pback{inset:0;transform:translateZ(-20px);border-radius:4px 12px 12px 4px}
+.pspine{width:40px;height:100%;left:-20px;transform:rotateY(90deg)}
+.pedge{width:40px;height:100%;right:-20px;background:repeating-linear-gradient(0deg,#f3e6c8 0 2px,#d9c9a3 2px 3px);transform:rotateY(90deg)}
+.ptop{width:100%;height:40px;top:-20px;background:#efe2c2;transform:rotateX(90deg)}
+.pbot{width:100%;height:40px;bottom:-20px;background:#efe2c2;transform:rotateX(-90deg)}
+.vshadow{width:230px;height:26px;margin:-6px auto 14px;border-radius:50%;background:radial-gradient(rgba(0,0,0,.35),transparent 70%);filter:blur(6px)}
+.vctrl{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
+.vctrl button{padding:10px 18px;border-radius:30px;border:1px solid var(--border);background:var(--card);font-size:13px;font-weight:600;transition:.2s}
+.vctrl button:hover{border-color:var(--primary);color:var(--primary)}
+.vhint{text-align:center;color:var(--muted);font-size:12px;margin-top:12px}
+
+.info h1{font-size:clamp(30px,3.6vw,44px);line-height:1.15;margin-bottom:10px}
+.info .by{color:var(--muted);margin-bottom:14px}
+.info .by b{color:var(--text)}
+.rate{display:flex;align-items:center;gap:10px;margin-bottom:22px}
+.rate .stars{font-size:18px}
+.rate span{color:var(--muted);font-size:14px}
+.pricebox{display:flex;align-items:baseline;gap:14px;margin-bottom:8px;flex-wrap:wrap}
+.pricebox .now{font-size:34px;font-weight:800}
+.pricebox .old{color:var(--muted);text-decoration:line-through;font-size:18px}
+.pricebox .off{background:var(--accent);color:#fff;padding:4px 12px;border-radius:20px;font-size:13px;font-weight:700}
+.stock{color:#1a9a5b;font-size:14px;font-weight:600;margin-bottom:22px}
+.desc{color:var(--muted);line-height:1.8;font-size:15.5px;margin-bottom:26px}
+.buy{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
+.qty{display:flex;align-items:center;border:1px solid var(--border);border-radius:14px;background:var(--card);overflow:hidden}
+.qty button{width:44px;height:50px;font-size:20px;transition:.2s}
+.qty button:hover{background:var(--bg2)}
+.qty b{min-width:38px;text-align:center}
+.favbtn{width:52px;height:52px;border-radius:14px;border:1px solid var(--border);background:var(--card);display:grid;place-items:center;transition:.25s}
+.favbtn svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2}
+.favbtn:hover{transform:scale(1.08);border-color:#e0394f}
+.favbtn.on{color:#e0394f;background:#ffe9ec;border-color:#f6b6c0}
+.favbtn.on svg{fill:currentColor}
+.total{color:var(--muted);font-size:14px;margin-bottom:26px}
+.total b{color:var(--text)}
+.specs{border:1px solid var(--border);border-radius:var(--radius);background:var(--card);overflow:hidden;margin-bottom:20px}
+.specs div{display:flex;justify-content:space-between;padding:13px 18px;font-size:14px}
+.specs div:nth-child(odd){background:var(--bg2)}
+.specs span{color:var(--muted)}
+.perks{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.perk{text-align:center;padding:14px 8px;border:1px dashed var(--border);border-radius:14px;font-size:12.5px;color:var(--muted)}
+.perk i{display:block;font-style:normal;font-size:22px;margin-bottom:6px}
+.rel{margin-top:80px}
+.rel h2{font-size:clamp(26px,3vw,34px);margin-bottom:26px}
+.nf{text-align:center;padding:100px 20px}
+.nf h2{font-size:34px;margin-bottom:16px}
+
+@media(max-width:900px){
+  .links{display:none;position:absolute;top:70px;left:0;right:0;background:var(--bg);flex-direction:column;padding:12px 20px;border-bottom:1px solid var(--border)}
+  .links.show{display:flex}.burger{display:grid}
+  .pgrid{grid-template-columns:1fr;gap:30px}.viewer{position:static}
+  .search{max-width:none}
+}
+@media(max-width:600px){
+  .nav{gap:8px}.logo b{display:none}
+  .scene{height:380px}.rot{transform-origin:center}
+  .grid{grid-template-columns:repeat(2,1fr);gap:14px}
+  .card{padding:12px}.card .bookwrap{height:200px}.bk3{transform:scale(.85) rotateY(-18deg)!important}
+  .perks{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- ============ HEADER ============ -->
+<header>
+  <div class="container nav">
+    <a href="index.html" class="logo"><span>📖</span><b>Kitobxona</b></a>
+    <nav class="links" id="links">
+      <a href="index.html" data-i18n="navHome">Bosh sahifa</a>
+      <a href="catalog.html" class="active" data-i18n="navCatalog">Katalog</a>
+      <a href="favorites.html" data-i18n="navFav">Sevimlilar</a>
+      <a href="cart.html" data-i18n="navCart">Savat</a>
+    </nav>
+    <div class="search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input id="q" type="search" autocomplete="off" data-i18n-ph="search" placeholder="Kitob yoki muallif qidirish...">
+      <div id="sug"></div>
+    </div>
+    <div class="tools">
+      <select class="lang" id="lang"><option value="uz">UZ</option><option value="ru">RU</option><option value="en">EN</option></select>
+      <button class="ibtn" id="theme" aria-label="theme"><span id="themeIco">🌙</span></button>
+      <a class="ibtn" href="favorites.html" aria-label="favorites"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-4.6-9.3-9.1C1 8.5 3 5 6.4 5c2 0 3.6 1.1 4.6 2.6h2C14 6.1 15.6 5 17.6 5 21 5 23 8.5 21.3 11.9 19 16.4 12 21 12 21z"/></svg><span class="badge" id="favCount" data-n="0"></span></a>
+      <a class="ibtn" href="cart.html" aria-label="cart"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M2 3h3l2.6 12.4a2 2 0 0 0 2 1.6h7.8a2 2 0 0 0 2-1.5L21 8H6"/></svg><span class="badge" id="cartCount" data-n="0"></span></a>
+      <button class="ibtn burger" id="burger" aria-label="menu">☰</button>
+    </div>
+  </div>
+</header>
+
+<main class="container" id="page"></main>
+<footer>© 2026 Kitobxona. <span data-i18n="rights">Barcha huquqlar himoyalangan.</span></footer>
+<div id="toast"></div>
+
+<script>
+/* =====================================================
+   SHARED CORE  (har bir HTML faylda bir xil)
+   ===================================================== */
+const BOOKS = [
+  {id:1, t:{uz:"O'tkan kunlar",ru:"Минувшие дни",en:"Bygone Days"}, a:"Abdulla Qodiriy", g:"fiction", p:68000, old:80000, r:4.9, n:1280, c:["#7a2e12","#d9822b"], ic:"❦", y:1925, pg:420},
+  {id:2, t:{uz:"Mehrobdan chayon",ru:"Скорпион из алтаря",en:"Scorpion from the Altar"}, a:"Abdulla Qodiriy", g:"fiction", p:59000, r:4.8, n:910, c:["#1f4e5f","#4fa3a5"], ic:"✦", y:1929, pg:360},
+  {id:3, t:{uz:"Atomic Habits",ru:"Атомные привычки",en:"Atomic Habits"}, a:"James Clear", g:"selfdev", p:95000, old:115000, r:4.9, n:2310, c:["#c0392b","#f39c12"], ic:"⚛", y:2018, pg:320},
+  {id:4, t:{uz:"Boy ota, kambag'al ota",ru:"Богатый папа, бедный папа",en:"Rich Dad Poor Dad"}, a:"Robert Kiyosaki", g:"business", p:79000, r:4.7, n:1840, c:["#14532d","#65a30d"], ic:"$", y:1997, pg:336},
+  {id:5, t:{uz:"Kichkina shahzoda",ru:"Маленький принц",en:"The Little Prince"}, a:"Antoine de Saint-Exupéry", g:"kids", p:52000, r:4.9, n:3020, c:["#1e3a8a","#60a5fa"], ic:"☆", y:1943, pg:96},
+  {id:6, t:{uz:"Ikki eshik orasi",ru:"Между двух дверей",en:"Between Two Doors"}, a:"O'tkir Hoshimov", g:"fiction", p:64000, r:4.8, n:760, c:["#4a1d6b","#a855f7"], ic:"❖", y:1986, pg:380},
+  {id:7, t:{uz:"Zero to One",ru:"От нуля к единице",en:"Zero to One"}, a:"Peter Thiel", g:"business", p:88000, old:99000, r:4.6, n:1120, c:["#111827","#6b7280"], ic:"0→1", y:2014, pg:224},
+  {id:8, t:{uz:"1984",ru:"1984",en:"1984"}, a:"George Orwell", g:"fiction", p:72000, r:4.8, n:2640, c:["#7f1d1d","#111"], ic:"👁", y:1949, pg:328},
+  {id:9, t:{uz:"Sapiens",ru:"Sapiens",en:"Sapiens"}, a:"Yuval Noah Harari", g:"science", p:105000, r:4.8, n:1980, c:["#b45309","#fbbf24"], ic:"☼", y:2011, pg:512},
+  {id:10, t:{uz:"Python asoslari",ru:"Основы Python",en:"Python Fundamentals"}, a:"Eric Matthes", g:"tech", p:125000, old:150000, r:4.7, n:640, c:["#0f3d5e","#3b82f6"], ic:"</>", y:2023, pg:544},
+  {id:11, t:{uz:"Alisa mo'jizalar mamlakatida",ru:"Алиса в стране чудес",en:"Alice in Wonderland"}, a:"Lewis Carroll", g:"kids", p:48000, r:4.7, n:870, c:["#be185d","#f9a8d4"], ic:"♠", y:1865, pg:200},
+  {id:12, t:{uz:"Deep Work",ru:"Глубокая работа",en:"Deep Work"}, a:"Cal Newport", g:"selfdev", p:82000, r:4.6, n:930, c:["#134e4a","#2dd4bf"], ic:"◎", y:2016, pg:304}
+];
+const GENRES = {
+  fiction:{ic:"📖",uz:"Badiiy",ru:"Художественная",en:"Fiction"},
+  business:{ic:"💼",uz:"Biznes",ru:"Бизнес",en:"Business"},
+  selfdev:{ic:"🌱",uz:"Rivojlanish",ru:"Саморазвитие",en:"Self-growth"},
+  kids:{ic:"🧸",uz:"Bolalar",ru:"Детские",en:"Kids"},
+  science:{ic:"🔬",uz:"Ilmiy",ru:"Научная",en:"Science"},
+  tech:{ic:"💻",uz:"Texnologiya",ru:"Технологии",en:"Tech"}
+};
+const I18N = {
+ uz:{navHome:"Bosh sahifa",navCatalog:"Katalog",navFav:"Sevimlilar",navCart:"Savat",search:"Kitob yoki muallif qidirish...",
+  rights:"Barcha huquqlar himoyalangan.",add:"Savatga",added:"Savatga qo'shildi ✓",favAdd:"Sevimlilarga qo'shildi ♥",favDel:"Sevimlilardan olib tashlandi",som:"so'm",nores:"Hech narsa topilmadi",
+  home:"Bosh sahifa",by:"Muallif",reviews:"sharh",inStock:"✓ Omborda bor",addCart:"Savatga qo'shish",buyNow:"Hoziroq sotib olish",total:"Jami:",
+  spAuthor:"Muallif",spGenre:"Janr",spYear:"Nashr yili",spPages:"Sahifalar",spCover:"Muqova",spCoverV:"Qattiq muqova",spLang:"Til",spLangV:"O'zbek / Rus / Ingliz",
+  pk1:"Tez yetkazish",pk2:"7 kun qaytarish",pk3:"Xavfsiz to'lov",rel:"Shu janrdagi boshqa kitoblar",
+  vOpen:"📖 Kitobni ochish",vClose:"📕 Yopish",vFlip:"🔄 Orqa tomoni",vFront:"Old tomoni",vHint:"Sichqoncha bilan sudrab aylantiring",
+  inside:"Ichkarida",nfTitle:"Kitob topilmadi",nfBtn:"Katalogga qaytish",off:"chegirma"},
+ ru:{navHome:"Главная",navCatalog:"Каталог",navFav:"Избранное",navCart:"Корзина",search:"Поиск книги или автора...",
+  rights:"Все права защищены.",add:"В корзину",added:"Добавлено в корзину ✓",favAdd:"Добавлено в избранное ♥",favDel:"Удалено из избранного",som:"сум",nores:"Ничего не найдено",
+  home:"Главная",by:"Автор",reviews:"отзывов",inStock:"✓ В наличии",addCart:"Добавить в корзину",buyNow:"Купить сейчас",total:"Итого:",
+  spAuthor:"Автор",spGenre:"Жанр",spYear:"Год издания",spPages:"Страниц",spCover:"Обложка",spCoverV:"Твёрдая обложка",spLang:"Язык",spLangV:"Узб / Рус / Англ",
+  pk1:"Быстрая доставка",pk2:"Возврат 7 дней",pk3:"Безопасная оплата",rel:"Другие книги этого жанра",
+  vOpen:"📖 Открыть книгу",vClose:"📕 Закрыть",vFlip:"🔄 Задняя сторона",vFront:"Лицевая сторона",vHint:"Перетаскивайте мышью для вращения",
+  inside:"Внутри",nfTitle:"Книга не найдена",nfBtn:"Вернуться в каталог",off:"скидка"},
+ en:{navHome:"Home",navCatalog:"Catalog",navFav:"Favorites",navCart:"Cart",search:"Search a book or author...",
+  rights:"All rights reserved.",add:"Add to cart",added:"Added to cart ✓",favAdd:"Added to favorites ♥",favDel:"Removed from favorites",som:"UZS",nores:"Nothing found",
+  home:"Home",by:"Author",reviews:"reviews",inStock:"✓ In stock",addCart:"Add to cart",buyNow:"Buy now",total:"Total:",
+  spAuthor:"Author",spGenre:"Genre",spYear:"Published",spPages:"Pages",spCover:"Cover",spCoverV:"Hardcover",spLang:"Language",spLangV:"Uzbek / Russian / English",
+  pk1:"Fast delivery",pk2:"7-day return",pk3:"Secure payment",rel:"More books in this genre",
+  vOpen:"📖 Open the book",vClose:"📕 Close",vFlip:"🔄 Back side",vFront:"Front side",vHint:"Drag with your mouse to rotate",
+  inside:"Inside",nfTitle:"Book not found",nfBtn:"Back to catalog",off:"off"}
+};
+const DESC = {
+  uz:{fiction:t=>`«${t}» — o'quvchilar qalbidan chuqur joy olgan asar. Esda qoladigan qahramonlar, o'ylantiradigan voqealar va boy til sizni birinchi sahifadan boshlab o'ziga tortadi. Kutubxonangizning bezagi bo'ladigan kitob.`,
+    business:t=>`«${t}» — pul, biznes va fikrlash tarzi haqida amaliy g'oyalar to'plami. Oddiy tilda yozilgan, hayotiy misollarga boy. O'qigach, o'z ishingizni boshqacha ko'rasiz.`,
+    selfdev:t=>`«${t}» — odatlar, intizom va o'sish haqida amaliy qo'llanma. Har bir bobda darhol qo'llash mumkin bo'lgan aniq qadamlar bor. Hayotingizni kichik o'zgarishlardan boshlang.`,
+    kids:t=>`«${t}» — kichkintoylar ham, kattalar ham sevib o'qiydigan kitob. Yorqin hikoya, mehr va donolik. Oilaviy o'qish uchun juda mos.`,
+    science:t=>`«${t}» — murakkab g'oyalarni sodda va qiziqarli bayon qiladigan ilmiy-ommabop asar. Dunyoga yangicha qarashga yordam beradi.`,
+    tech:t=>`«${t}» — dasturlash va texnologiyani noldan o'rgatadigan amaliy qo'llanma. Misollar va mashqlar bilan, boshlovchilar uchun ham tushunarli.`},
+  ru:{fiction:t=>`«${t}» — произведение, прочно занявшее место в сердцах читателей. Запоминающиеся герои, заставляющие думать события и богатый язык увлекут вас с первой страницы. Украшение любой библиотеки.`,
+    business:t=>`«${t}» — сборник практических идей о деньгах, бизнесе и образе мышления. Написано простым языком, много жизненных примеров. После прочтения вы по-новому взглянете на своё дело.`,
+    selfdev:t=>`«${t}» — практическое руководство о привычках, дисциплине и росте. В каждой главе конкретные шаги, которые можно применить сразу. Начните менять жизнь с малого.`,
+    kids:t=>`«${t}» — книга, которую любят и дети, и взрослые. Яркая история, доброта и мудрость. Отлично подходит для семейного чтения.`,
+    science:t=>`«${t}» — научно-популярное издание, простым и увлекательным языком объясняющее сложные идеи. Помогает по-новому взглянуть на мир.`,
+    tech:t=>`«${t}» — практическое руководство, обучающее программированию и технологиям с нуля. С примерами и упражнениями, понятно даже новичкам.`},
+  en:{fiction:t=>`“${t}” is a work that has earned a lasting place in readers' hearts. Memorable characters, thought-provoking events and rich language pull you in from the first page. A gem for any bookshelf.`,
+    business:t=>`“${t}” is a collection of practical ideas about money, business and mindset. Written in plain language with plenty of real-life examples. You'll see your work differently afterwards.`,
+    selfdev:t=>`“${t}” is a practical guide to habits, discipline and growth. Every chapter has concrete steps you can apply right away. Start changing your life with small moves.`,
+    kids:t=>`“${t}” is a book loved by kids and adults alike. A bright story full of kindness and wisdom, perfect for reading together as a family.`,
+    science:t=>`“${t}” is a popular-science work that explains complex ideas in a simple and gripping way, helping you see the world differently.`,
+    tech:t=>`“${t}” is a hands-on guide that teaches programming and technology from scratch, with examples and exercises that beginners can follow.`}
+};
+
+const LS = {
+  get(k,d){try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}},
+  set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+};
+let lang  = LS.get('kx_lang','uz');
+let theme = LS.get('kx_theme', matchMedia('(prefers-color-scheme: dark)').matches ? 'dark':'light');
+let cart  = LS.get('kx_cart',{});
+let favs  = LS.get('kx_favs',[]);
+
+const $  = (s,r=document)=>r.querySelector(s);
+const $$ = (s,r=document)=>[...r.querySelectorAll(s)];
+const tr = k => (I18N[lang]&&I18N[lang][k]) || I18N.uz[k] || k;
+const money = n => n.toLocaleString('ru-RU').replace(/\u00a0/g,' ') + ' ' + tr('som');
+const bt = b => b.t[lang];
+
+function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove('show'),1800)}
+function applyLang(){
+  document.documentElement.lang = lang;
+  $$('[data-i18n]').forEach(el=>el.textContent = tr(el.dataset.i18n));
+  $$('[data-i18n-ph]').forEach(el=>el.placeholder = tr(el.dataset.i18nPh));
+  $('#lang').value = lang;
+}
+function applyTheme(){
+  document.documentElement.dataset.theme = theme;
+  $('#themeIco').textContent = theme==='dark' ? '☀️' : '🌙';
+}
+function updateCounts(){
+  const c = Object.values(cart).reduce((s,x)=>s+x,0);
+  $('#cartCount').textContent = c||''; $('#cartCount').dataset.n = c;
+  $('#favCount').textContent = favs.length||''; $('#favCount').dataset.n = favs.length;
+}
+function addToCart(id,n=1,silent){cart[id]=(cart[id]||0)+n;LS.set('kx_cart',cart);updateCounts();if(!silent)toast(tr('added'))}
+function toggleFav(id){
+  const i=favs.indexOf(id);
+  if(i>-1){favs.splice(i,1);toast(tr('favDel'))}else{favs.push(id);toast(tr('favAdd'))}
+  LS.set('kx_favs',favs);updateCounts();
+  $$(`.fav[data-id="${id}"],.favbtn[data-id="${id}"]`).forEach(b=>b.classList.toggle('on',favs.includes(id)));
+}
+addEventListener('storage',e=>{
+  if(e.key==='kx_cart')cart=LS.get('kx_cart',{});
+  if(e.key==='kx_favs'){favs=LS.get('kx_favs',[]);$$('.fav,.favbtn').forEach(b=>b.classList.toggle('on',favs.includes(+b.dataset.id)))}
+  updateCounts();
+});
+function coverHTML(b,size){
+  return `<div class="cov" style="background:linear-gradient(145deg,${b.c[0]},${b.c[1]});${size?`font-size:${size}px`:''}">
+    <div class="cg">${b.ic}</div><div><div class="ct">${bt(b)}</div><div class="ca" style="margin-top:6px">${b.a}</div></div></div>`;
+}
+function stars(r){const f=Math.round(r);return '★'.repeat(f)+'☆'.repeat(5-f)}
+function cardHTML(b){
+  const sale = b.old ? `<span class="sale">-${Math.round((1-b.p/b.old)*100)}%</span>` : '';
+  return `<article class="card" data-id="${b.id}">
+    ${sale}
+    <button class="fav ${favs.includes(b.id)?'on':''}" data-id="${b.id}" aria-label="favorite"><svg viewBox="0 0 24 24"><path d="M12 21s-7-4.6-9.3-9.1C1 8.5 3 5 6.4 5c2 0 3.6 1.1 4.6 2.6h2C14 6.1 15.6 5 17.6 5 21 5 23 8.5 21.3 11.9 19 16.4 12 21 12 21z"/></svg></button>
+    <a href="product.html?id=${b.id}" class="bookwrap"><div class="bk3"><div class="front">${coverHTML(b,15)}</div><div class="side"></div></div></a>
+    <h3><a href="product.html?id=${b.id}">${bt(b)}</a></h3>
+    <div class="au">${b.a}</div>
+    <div class="stars">${stars(b.r)}<small>${b.r} (${b.n})</small></div>
+    <div class="row"><div class="price">${money(b.p)}</div><button class="add" data-add="${b.id}">${tr('add')}</button></div>
+  </article>`;
+}
+function renderGrid(el,list){
+  el.innerHTML = list.length ? list.map(cardHTML).join('') : `<div class="empty">📭 ${tr('nores')}</div>`;
+  $$('.card',el).forEach(card=>{
+    card.addEventListener('mousemove',e=>{
+      const r=card.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;
+      card.style.transform=`perspective(900px) rotateX(${-y*6}deg) rotateY(${x*6}deg) translateY(-4px)`;
+    });
+    card.addEventListener('mouseleave',()=>card.style.transform='');
+  });
+}
+document.addEventListener('click',e=>{
+  const a=e.target.closest('[data-add]'); if(a){addToCart(+a.dataset.add);return}
+  const f=e.target.closest('.fav'); if(f){e.preventDefault();toggleFav(+f.dataset.id)}
+});
+
+/* ---------- Qidiruv ---------- */
+const qEl=$('#q'), sug=$('#sug');
+function searchBooks(q){
+  q=q.trim().toLowerCase(); if(!q)return [];
+  return BOOKS.filter(b=>Object.values(b.t).some(t=>t.toLowerCase().includes(q))||b.a.toLowerCase().includes(q));
+}
+qEl.addEventListener('input',()=>{
+  const res=searchBooks(qEl.value).slice(0,6);
+  if(!qEl.value.trim()){sug.style.display='none';return}
+  sug.innerHTML = res.length ? res.map(b=>`<a href="product.html?id=${b.id}"><div class="mini">${coverHTML(b,5)}</div><div>${bt(b)}<small>${b.a} · ${money(b.p)}</small></div></a>`).join('')
+    : `<div style="padding:14px;color:var(--muted);font-size:14px">${tr('nores')}</div>`;
+  sug.style.display='block';
+});
+qEl.addEventListener('keydown',e=>{if(e.key==='Enter'&&qEl.value.trim())location.href='catalog.html?q='+encodeURIComponent(qEl.value.trim())});
+document.addEventListener('click',e=>{if(!e.target.closest('.search'))sug.style.display='none'});
+
+$('#lang').addEventListener('change',e=>{lang=e.target.value;LS.set('kx_lang',lang);applyLang();renderAll()});
+$('#theme').addEventListener('click',()=>{theme=theme==='dark'?'light':'dark';LS.set('kx_theme',theme);applyTheme()});
+$('#burger').addEventListener('click',()=>$('#links').classList.toggle('show'));
+
+/* =====================================================
+   SAHIFAGA XOS KOD  (product.html)
+   ===================================================== */
+const pid = +(new URLSearchParams(location.search).get('id')) || 1;
+const book = BOOKS.find(b=>b.id===pid);
+let qty = 1;
+// 3D holat
+const view = {rx:-8, ry:-24, open:false, flipped:false, drag:false, lx:0, ly:0, auto:true};
+
+function renderAll(){
+  const page = $('#page');
+  if(!book){
+    page.innerHTML = `<div class="nf"><h2>📭 ${tr('nfTitle')}</h2><a class="btn primary" href="catalog.html">${tr('nfBtn')}</a></div>`;
+    return;
+  }
+  document.title = `${bt(book)} — Kitobxona`;
+  const g = GENRES[book.g];
+  const off = book.old ? Math.round((1-book.p/book.old)*100) : 0;
+  const desc = DESC[lang][book.g](bt(book));
+  page.innerHTML = `
+  <div class="crumbs"><a href="index.html">${tr('home')}</a> / <a href="catalog.html">${tr('navCatalog')}</a> / <a href="catalog.html?genre=${book.g}">${g[lang]}</a> / ${bt(book)}</div>
+  <div class="pgrid">
+    <div class="viewer">
+      <div class="scene" id="scene">
+        <div class="rot" id="rot">
+          <div class="pback" style="background:linear-gradient(145deg,${book.c[1]},${book.c[0]})"></div>
+          <div class="pspine" style="background:linear-gradient(90deg,${book.c[0]},${book.c[1]},${book.c[0]})"></div>
+          <div class="pedge"></div><div class="ptop"></div><div class="pbot"></div>
+          <div class="ppg last"><h4>${tr('inside')}</h4><p>${desc}</p></div>
+          <div class="ppg c"></div><div class="ppg b"></div><div class="ppg a"></div>
+          <div class="pcover"><div class="f out">${coverHTML(book,24)}</div><div class="f in"></div></div>
+        </div>
+      </div>
+      <div class="vshadow"></div>
+      <div class="vctrl">
+        <button id="vOpen">${tr('vOpen')}</button>
+        <button id="vFlip">${tr('vFlip')}</button>
+      </div>
+      <div class="vhint">${tr('vHint')}</div>
+    </div>
+
+    <div class="info">
+      <h1>${bt(book)}</h1>
+      <div class="by">${tr('by')}: <b>${book.a}</b></div>
+      <div class="rate"><span class="stars">${stars(book.r)}</span><b>${book.r}</b><span>· ${book.n.toLocaleString('ru-RU')} ${tr('reviews')}</span></div>
+      <div class="pricebox"><span class="now">${money(book.p)}</span>${book.old?`<span class="old">${money(book.old)}</span><span class="off">-${off}%</span>`:''}</div>
+      <div class="stock">${tr('inStock')}</div>
+      <p class="desc">${desc}</p>
+      <div class="buy">
+        <div class="qty"><button id="qm">−</button><b id="qv">${qty}</b><button id="qp">+</button></div>
+        <button class="btn primary" id="addBtn" style="flex:1;min-width:180px">🛒 ${tr('addCart')}</button>
+        <button class="favbtn ${favs.includes(book.id)?'on':''}" data-id="${book.id}" id="favBtn" aria-label="favorite"><svg viewBox="0 0 24 24"><path d="M12 21s-7-4.6-9.3-9.1C1 8.5 3 5 6.4 5c2 0 3.6 1.1 4.6 2.6h2C14 6.1 15.6 5 17.6 5 21 5 23 8.5 21.3 11.9 19 16.4 12 21 12 21z"/></svg></button>
+      </div>
+      <div class="total">${tr('total')} <b id="tot">${money(book.p*qty)}</b></div>
+      <button class="btn ghost" id="buyNow" style="width:100%;margin-bottom:26px">⚡ ${tr('buyNow')}</button>
+      <div class="specs">
+        <div><span>${tr('spAuthor')}</span><b>${book.a}</b></div>
+        <div><span>${tr('spGenre')}</span><b>${g.ic} ${g[lang]}</b></div>
+        <div><span>${tr('spYear')}</span><b>${book.y}</b></div>
+        <div><span>${tr('spPages')}</span><b>${book.pg}</b></div>
+        <div><span>${tr('spCover')}</span><b>${tr('spCoverV')}</b></div>
+        <div><span>${tr('spLang')}</span><b>${tr('spLangV')}</b></div>
+      </div>
+      <div class="perks">
+        <div class="perk"><i>🚚</i>${tr('pk1')}</div>
+        <div class="perk"><i>🔄</i>${tr('pk2')}</div>
+        <div class="perk"><i>🔒</i>${tr('pk3')}</div>
+      </div>
+    </div>
+  </div>
+  <section class="rel"><h2>${tr('rel')}</h2><div class="grid" id="relGrid"></div></section>`;
+
+  // o'xshash kitoblar
+  let rel = BOOKS.filter(b=>b.g===book.g && b.id!==book.id);
+  if(rel.length<4) rel = rel.concat(BOOKS.filter(b=>b.g!==book.g && b.id!==book.id).sort((a,b)=>b.n-a.n)).slice(0,4);
+  renderGrid($('#relGrid'),rel.slice(0,4));
+  bindProduct();
+  applyView(true);
+}
+
+function bindProduct(){
+  const upd=()=>{$('#qv').textContent=qty;$('#tot').textContent=money(book.p*qty)};
+  $('#qm').onclick=()=>{qty=Math.max(1,qty-1);upd()};
+  $('#qp').onclick=()=>{qty=Math.min(20,qty+1);upd()};
+  $('#addBtn').onclick=()=>{addToCart(book.id,qty);bounce()};
+  $('#buyNow').onclick=()=>{addToCart(book.id,qty,true);location.href='cart.html'};
+  $('#favBtn').onclick=()=>toggleFav(book.id);
+
+  const rot=$('#rot'), scene=$('#scene');
+  $('#vOpen').onclick=()=>{
+    view.open=!view.open; view.flipped=false; view.auto=false;
+    view.ry = view.open ? -12 : -24; view.rx = view.open ? -4 : -8;
+    rot.classList.add('smooth'); applyView(); setTimeout(()=>rot.classList.remove('smooth'),950);
+  };
+  $('#vFlip').onclick=()=>{
+    view.flipped=!view.flipped; view.auto=false; if(view.open)view.open=false;
+    view.ry = view.flipped ? 156 : -24; view.rx=-8;
+    rot.classList.add('smooth'); applyView(); setTimeout(()=>rot.classList.remove('smooth'),950);
+  };
+  // sichqoncha / sensor bilan aylantirish
+  const down=e=>{view.drag=true;view.auto=false;const p=e.touches?e.touches[0]:e;view.lx=p.clientX;view.ly=p.clientY;rot.classList.remove('smooth')};
+  const move=e=>{
+    if(!view.drag)return; const p=e.touches?e.touches[0]:e;
+    view.ry += (p.clientX-view.lx)*.6; view.rx -= (p.clientY-view.ly)*.4;
+    view.rx = Math.max(-40,Math.min(40,view.rx));
+    view.lx=p.clientX; view.ly=p.clientY; applyView();
+  };
+  const up=()=>{view.drag=false};
+  scene.addEventListener('mousedown',down); addEventListener('mousemove',move); addEventListener('mouseup',up);
+  scene.addEventListener('touchstart',down,{passive:true}); addEventListener('touchmove',move,{passive:true}); addEventListener('touchend',up);
+  scene.addEventListener('dblclick',()=>$('#vOpen').click());
+  $('#vOpen').textContent = view.open ? tr('vClose') : tr('vOpen');
+}
+function applyView(init){
+  const rot=$('#rot'); if(!rot)return;
+  rot.style.transform=`rotateX(${view.rx}deg) rotateY(${view.ry}deg)`;
+  rot.classList.toggle('open',view.open);
+  const o=$('#vOpen'); if(o)o.textContent = view.open ? tr('vClose') : tr('vOpen');
+  const f=$('#vFlip'); if(f)f.textContent = view.flipped ? tr('vFront') : tr('vFlip');
+}
+// bo'sh turganda kitob asta-sekin tebranadi
+let tt=0;
+(function idle(){
+  tt+=.02;
+  if(view.auto && !view.drag && book){view.ry = -24 + Math.sin(tt)*18; view.rx = -8 + Math.cos(tt*.8)*4; applyView()}
+  requestAnimationFrame(idle);
+})();
+function bounce(){const b=$('#addBtn');b.animate([{transform:'scale(1)'},{transform:'scale(.93)'},{transform:'scale(1.04)'},{transform:'scale(1)'}],{duration:350})}
+
+/* ---------- Start ---------- */
+applyTheme();applyLang();updateCounts();renderAll();
+</script>
+</body>
+</html>
